@@ -9,7 +9,7 @@
       "itinerary": true,
       "todo": true,
       "driving": false,
-      "ledger": false
+      "ledger": true
     },
     "language": "zh-CN",
     "persistence": {

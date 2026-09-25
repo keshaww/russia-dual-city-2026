@@ -4,8 +4,10 @@
   const STORAGE_VERSION = 1;
   const DEFAULT_SETTINGS = Object.freeze({
     baseCurrency: "CNY",
-    commonCurrencies: ["EUR", "CHF", "HKD"],
-    lastCurrency: "CNY"
+    commonCurrencies: ["RUB", "USD"],
+    lastCurrency: "RUB",
+    rubToCnyRate: null,
+    rateUpdatedAt: ""
   });
   const CATEGORIES = Object.freeze(["餐饮", "交通", "住宿", "门票", "购物", "其他"]);
   const AVATAR_COLORS = Object.freeze([
@@ -153,6 +155,7 @@
   let pendingNoteSave = null;
   let noteOpenRequest = 0;
   let mutationQueue = Promise.resolve();
+  let conversionDraft = { direction: "RUB-CNY", amount: "", rate: "" };
 
   function normalizeSearch(value) {
     return String(value || "")
@@ -220,6 +223,13 @@
     return Number.isSafeInteger(cents) ? cents : null;
   }
 
+  function parseRate(value) {
+    const raw = String(value ?? "").trim();
+    if (!/^(?:\d+|\d*\.\d{1,6})$/.test(raw)) return null;
+    const rate = Number(raw);
+    return Number.isFinite(rate) && rate > 0 && rate < 1000 ? rate : null;
+  }
+
   function centsToInput(cents) {
     if (!Number.isSafeInteger(cents)) return "";
     return (cents / 100).toFixed(2);
@@ -274,8 +284,11 @@
         .filter((code) => CURRENCY_BY_CODE.has(code) && code !== baseCurrency)
     )];
     const availableCurrencies = new Set([baseCurrency, ...commonCurrencies]);
-    const requestedLast = String(raw.settings?.lastCurrency || baseCurrency).toUpperCase();
+    const requestedLast = String(raw.settings?.lastCurrency || DEFAULT_SETTINGS.lastCurrency).toUpperCase();
     const lastCurrency = availableCurrencies.has(requestedLast) ? requestedLast : baseCurrency;
+    const rubToCnyRate = parseRate(raw.settings?.rubToCnyRate);
+    const rateUpdatedAt = rubToCnyRate && typeof raw.settings?.rateUpdatedAt === "string"
+      ? raw.settings.rateUpdatedAt : "";
     const bills = (Array.isArray(raw.bills) ? raw.bills : []).flatMap((bill) => {
       const originalAmountCents = Number(bill?.originalAmountCents);
       const baseAmountCents = Number(bill?.baseAmountCents);
@@ -303,7 +316,7 @@
     });
     return {
       version: STORAGE_VERSION,
-      settings: { baseCurrency, commonCurrencies, lastCurrency },
+      settings: { baseCurrency, commonCurrencies, lastCurrency, rubToCnyRate, rateUpdatedAt },
       travelers,
       bills,
       updatedAt: typeof raw.updatedAt === "string" ? raw.updatedAt : fallback.updatedAt
@@ -677,7 +690,7 @@
                 <span class="ledger-converted-code">${escapeHtml(baseCurrency)}</span>
                 <input class="ledger-input" name="baseAmount" data-ledger-field="base-amount" type="text" inputmode="decimal" autocomplete="off" placeholder="手动填写换算后的总金额" value="${escapeAttribute(editingBill && isForeign ? centsToInput(editingBill.baseAmountCents) : draft?.baseAmount || "")}" ${isForeign ? "required" : ""}>
               </span>
-              <small class="ledger-field-help">按付款当时采用的汇率手动填写</small>
+              <small class="ledger-field-help">${currency === "RUB" && baseCurrency === "CNY" && ledgerData.settings.rubToCnyRate ? "按已保存的自填汇率估算；可改为实际扣款金额" : "按实际付款金额手动填写"}</small>
             </label>
 
             <fieldset class="ledger-fieldset">
@@ -693,11 +706,11 @@
 
             <label class="ledger-field ledger-note-field">
               <span class="ledger-field-label">备注 <small>选填</small></span>
-              <input class="ledger-input" type="text" name="note" maxlength="160" autocomplete="off" placeholder="例如：米兰大教堂门票" value="${escapeAttribute(editingBill?.note || draft?.note || "")}">
+              <input class="ledger-input" type="text" name="note" maxlength="160" autocomplete="off" placeholder="例如：彼得霍夫门票" value="${escapeAttribute(editingBill?.note || draft?.note || "")}">
             </label>
 
             <label class="ledger-field ledger-date-field">
-              <span class="ledger-field-label">下单时间 <small>选填</small></span>
+              <span class="ledger-field-label">消费时间 <small>选填</small></span>
               <input class="ledger-input" type="datetime-local" name="orderedAt" value="${escapeAttribute(editingBill?.orderedAt || draft?.orderedAt || "")}">
             </label>
 
@@ -905,6 +918,7 @@
   function renderEntryPage() {
     return `
       <section class="ledger-tab-panel" data-ledger-panel="entry" role="tabpanel" aria-labelledby="ledger-entry-tab" ${activeTab === "entry" ? "" : "hidden"}>
+        ${renderConverter()}
         <section class="ledger-members-strip" aria-label="本次同行人">
           <div class="ledger-members-strip-heading">
             <div><strong>同行人</strong><span>${ledgerData.travelers.length} 人</span></div>
@@ -918,6 +932,29 @@
         ${renderBillForm()}
         ${renderBillList()}
       </section>`;
+  }
+
+  function renderConverter() {
+    const savedRate = ledgerData.settings.rubToCnyRate;
+    const rateText = conversionDraft.rate || (savedRate ? String(savedRate) : "");
+    const updated = ledgerData.settings.rateUpdatedAt;
+    const updatedLabel = updated && Number.isFinite(Date.parse(updated))
+      ? `上次保存：${new Date(updated).toLocaleString("zh-CN")}` : "尚未保存汇率";
+    return `<section class="ledger-converter" aria-labelledby="ledger-converter-title">
+      <div class="ledger-section-heading"><div><p class="ledger-section-kicker">RUB ⇄ CNY</p><h2 id="ledger-converter-title">卢布换算</h2></div></div>
+      <form data-ledger-form="converter" class="ledger-converter-form">
+        <label class="ledger-field"><span class="ledger-field-label">方向</span><select class="ledger-select" name="direction" data-converter-direction>
+          <option value="RUB-CNY" ${conversionDraft.direction === "RUB-CNY" ? "selected" : ""}>卢布 → 人民币</option>
+          <option value="CNY-RUB" ${conversionDraft.direction === "CNY-RUB" ? "selected" : ""}>人民币 → 卢布</option>
+        </select></label>
+        <label class="ledger-field"><span class="ledger-field-label">金额</span><input class="ledger-input" name="amount" data-converter-amount type="text" inputmode="decimal" autocomplete="off" placeholder="例如 1000" value="${escapeAttribute(conversionDraft.amount)}"></label>
+        <label class="ledger-field ledger-converter-rate"><span class="ledger-field-label">自填汇率：1 RUB = ? CNY</span><input class="ledger-input" name="rate" data-converter-rate type="text" inputmode="decimal" autocomplete="off" placeholder="输入实际使用的汇率" value="${escapeAttribute(rateText)}"></label>
+        <button type="submit" class="ledger-secondary-button">保存汇率</button>
+      </form>
+      ${savedRate ? `<button type="button" class="ledger-text-button ledger-clear-rate" data-ledger-action="clear-rate">清除已存汇率</button>` : ""}
+      <output class="ledger-converter-result" data-converter-result aria-live="polite"></output>
+      <p class="ledger-converter-note">${escapeHtml(updatedLabel)} · 汇率由你填写，页面不会自动获取实时牌价；账单按实际扣款金额核对。</p>
+    </section>`;
   }
 
   function renderRelatedBills(member) {
@@ -1181,7 +1218,9 @@
         ${renderSettingsDialog()}
         ${renderCurrencyDialog()}
       </div>`;
+    syncBillConversion(ledgerRoot.querySelector('[data-ledger-form="bill"]'));
     syncSplitSummary();
+    syncConverter();
     attachDialogBehavior();
     if (openDialogName) {
       const dialog = ledgerRoot.querySelector(`[data-ledger-dialog="${openDialogName}"]`);
@@ -1262,6 +1301,31 @@
     };
   }
 
+  function syncConverter() {
+    const form = ledgerRoot?.querySelector('[data-ledger-form="converter"]');
+    const result = form?.parentElement?.querySelector('[data-converter-result]');
+    if (!form || !result) return;
+    const rate = parseRate(form.elements.rate.value);
+    const amountCents = toCents(form.elements.amount.value);
+    const direction = form.elements.direction.value;
+    if (!rate) { result.textContent = "填写汇率后即可换算"; return; }
+    if (amountCents === null) { result.textContent = "输入金额后显示换算结果"; return; }
+    const converted = direction === "CNY-RUB" ? amountCents / rate : amountCents * rate;
+    result.textContent = `约 ${formatMoney(Math.round(converted), direction === "CNY-RUB" ? "RUB" : "CNY")}`;
+  }
+
+  function syncBillConversion(form) {
+    if (!form || ledgerData.settings.baseCurrency !== "CNY") return;
+    const currency = form.elements.currency?.value;
+    const converted = form.elements.baseAmount;
+    const amountCents = toCents(form.elements.originalAmount?.value);
+    const rate = ledgerData.settings.rubToCnyRate;
+    if (currency !== "RUB" || !rate || !converted || !amountCents) return;
+    if (converted.value && converted.dataset.auto !== "true") return;
+    converted.value = centsToInput(Math.round(amountCents * rate));
+    converted.dataset.auto = "true";
+  }
+
   function syncSplitSummary() {
     if (!ledgerRoot || !ledgerData) return;
     const form = ledgerRoot.querySelector('[data-ledger-form="bill"]');
@@ -1296,6 +1360,10 @@
       convertedInput.required = isForeign;
       if (!isForeign) convertedInput.value = "";
     }
+    const help = convertedField?.querySelector(".ledger-field-help");
+    if (help) help.textContent = select.value === "RUB" && ledgerData.settings.baseCurrency === "CNY" && ledgerData.settings.rubToCnyRate
+      ? "按已保存的自填汇率估算；可改为实际扣款金额" : "按实际付款金额手动填写";
+    syncBillConversion(form);
     captureBillDraft();
     syncSplitSummary();
   }
@@ -1375,9 +1443,14 @@
     const code = button.dataset.ledgerCode || "";
     if (!form || !availableCurrencyCodes(code).includes(code)) return;
     const field = form.querySelector('[data-ledger-field="currency"]');
+    const previousCode = field?.value;
     const display = form.querySelector("[data-ledger-currency-display]");
     const dropdown = button.closest("details");
     if (field) field.value = code;
+    if (previousCode !== code) {
+      const converted = form.querySelector('[data-ledger-field="base-amount"]');
+      if (converted) { converted.value = ""; converted.dataset.auto = "true"; }
+    }
     if (display) display.textContent = `${code} · ${currencyByCode(code).nameZh}`;
     dropdown?.removeAttribute("open");
     if (field) syncCurrencyField(field);
@@ -1715,6 +1788,12 @@
     } else if (action === "open-settings") {
       captureBillDraft();
       showDialog("settings");
+    } else if (action === "clear-rate") {
+      captureBillDraft();
+      conversionDraft.rate = "";
+      void mutateData((next) => { next.settings.rubToCnyRate = null; next.settings.rateUpdatedAt = ""; }, {
+        reason: "rate-cleared", message: "已清除自填汇率"
+      });
     } else if (action === "edit-member") {
       captureBillDraft();
       editingMemberId = button.dataset.ledgerId || null;
@@ -1774,6 +1853,12 @@
   }
 
   function handleRootInput(event) {
+    if (event.target.closest('[data-ledger-form="converter"]')) {
+      const form = event.target.closest("form");
+      conversionDraft = { direction: form.elements.direction.value, amount: form.elements.amount.value, rate: form.elements.rate.value };
+      syncConverter();
+      return;
+    }
     if (event.target.matches("[data-ledger-currency-search]")) {
       currencyQuery = event.target.value;
       const results = ledgerRoot.querySelector("[data-ledger-currency-results]");
@@ -1783,12 +1868,20 @@
     const memberForm = event.target.closest('[data-ledger-form="member-add"]');
     if (memberForm) syncMemberPreview(memberForm);
     if (event.target.closest('[data-ledger-form="bill"]')) {
+      if (event.target.matches('[data-ledger-field="base-amount"]')) event.target.dataset.auto = "false";
+      if (event.target.matches('[data-ledger-field="original-amount"]')) syncBillConversion(event.target.closest("form"));
       captureBillDraft();
       syncSplitSummary();
     }
   }
 
   function handleRootChange(event) {
+    if (event.target.closest('[data-ledger-form="converter"]')) {
+      const form = event.target.closest("form");
+      conversionDraft = { direction: form.elements.direction.value, amount: form.elements.amount.value, rate: form.elements.rate.value };
+      syncConverter();
+      return;
+    }
     if (event.target.matches('[data-ledger-field="currency"]')) syncCurrencyField(event.target);
     if (event.target.closest('[data-ledger-form="bill"]')) {
       captureBillDraft();
@@ -1800,6 +1893,16 @@
     const form = event.target.closest("form[data-ledger-form]");
     if (!form || !ledgerRoot.contains(form)) return;
     event.preventDefault();
+    if (form.dataset.ledgerForm === "converter") {
+      const rate = parseRate(form.elements.rate.value);
+      if (!rate) { setNotice("请输入大于 0 的汇率，最多 6 位小数。"); form.elements.rate.focus(); return; }
+      captureBillDraft();
+      conversionDraft = { direction: form.elements.direction.value, amount: form.elements.amount.value, rate: String(rate) };
+      await mutateData((next) => { next.settings.rubToCnyRate = rate; next.settings.rateUpdatedAt = new Date().toISOString(); }, {
+        reason: "rate-updated", message: "汇率已保存在当前设备"
+      });
+      return;
+    }
     if (form.dataset.ledgerForm === "bill-note") {
       await submitBillNote(form);
       return;
@@ -1903,3 +2006,4 @@
   // The page controller initializes Ledger only when the module is enabled.
   // Standalone consumers can continue to call TravelLedger.init(options) explicitly.
 })();
+

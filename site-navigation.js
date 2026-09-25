@@ -1,5 +1,5 @@
 (() => {
-  const TRAVEL_HASHES = new Set(["", "#top", "#flights", "#route", "#itinerary", "#drive", "#prep"]);
+  const TRAVEL_HASHES = new Set(["", "#top", "#flights", "#route", "#itinerary", "#drive", "#prep", "#weather"]);
   const isLedgerHash = (hash) => hash === "#ledger" || hash.startsWith("#ledger-");
   const ledgerEnabled = () => !document.querySelector("#ledger-navigation-link")?.hidden;
   const viewForHash = (hash) => isLedgerHash(hash) && ledgerEnabled() ? "ledger" : "travel";
@@ -14,7 +14,7 @@
     return {
       travelView: document.querySelector('[data-site-view="travel"]'),
       ledgerView: document.querySelector('[data-site-view="ledger"]'),
-      travelLinks: [...document.querySelectorAll(".travel-navigation-menu a")],
+      travelLinks: [...document.querySelectorAll(".travel-nav-link")],
       ledgerLink: document.querySelector("#ledger-navigation-link"),
       skipLink: document.querySelector("#skip-link")
     };
@@ -105,7 +105,7 @@
         return;
       }
 
-      const travelLink = event.target.closest(".travel-navigation-menu a, #wordmark");
+      const travelLink = event.target.closest(".travel-nav-link, #wordmark");
       if (travelLink) {
         event.preventDefault();
         navigate(travelLink.getAttribute("href") || "#top");

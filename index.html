@@ -13,30 +13,29 @@
   <meta property="og:title" content="俄罗斯双城旅行｜2026年秋">
   <meta property="og:description" content="莫斯科与圣彼得堡的旅行行程和出行提醒。">
   <link rel="stylesheet" href="styles.css?v=20260925-transport-map">
-  <link rel="stylesheet" href="ledger.css?v=20260925-inline-nav">
+  <link rel="stylesheet" href="ledger.css?v=20260925-flat-nav">
+  <link rel="stylesheet" href="weather.css?v=20260925-weather">
   <script src="runtime-storage.js?v=20260910-2" defer></script>
   <script src="overview-map.js?v=20260910-2" defer></script>
   <script src="route-ui.js?v=20260925-transport-map" defer></script>
   <script src="geo-map.js?v=20260925-transport-map" defer></script>
-  <script src="app.js?v=20260925-transport-map" defer></script>
+  <script src="app.js?v=20260925-flat-nav" defer></script>
   <script src="ticket-pdf-preview.js?v=20260910-2" defer></script>
-  <script src="ledger.js?v=20260925-converter" defer></script>
-  <script src="site-navigation.js?v=20260925-inline-nav" defer></script>
+  <script src="ledger.js?v=20260925-auto-rate" defer></script>
+  <script src="site-navigation.js?v=20260925-flat-nav" defer></script>
+  <script src="weather.js?v=20260925-weather" defer></script>
 </head>
 <body>
   <a class="skip-link" id="skip-link" href="#main">跳到主要内容</a>
   <header class="topbar" id="topbar">
     <a class="wordmark" id="wordmark" href="#top" aria-label="返回顶部"></a>
     <nav class="primary-navigation" aria-label="主要模块">
-      <div class="travel-navigation" id="travel-navigation" hidden>
-        <div class="travel-navigation-menu" aria-label="旅行信息栏目">
-          <a href="#flights" data-module="flights" hidden>航班</a>
-          <a href="#route" data-module="overview" hidden>路线</a>
-          <a href="#itinerary" data-module="itinerary" hidden>行程</a>
-          <a href="#drive" data-module="driving" hidden>自驾</a>
-          <a href="#prep" data-module="todo" hidden>Todo</a>
-        </div>
-      </div>
+      <a class="travel-nav-link" href="#flights" data-module="flights" hidden>航班</a>
+      <a class="travel-nav-link" href="#route" data-module="overview" hidden>路线</a>
+      <a class="travel-nav-link" href="#itinerary" data-module="itinerary" hidden>行程</a>
+      <a class="travel-nav-link" href="#drive" data-module="driving" hidden>自驾</a>
+      <a class="travel-nav-link" href="#prep" data-module="todo" hidden>Todo</a>
+      <a class="travel-nav-link" href="#weather">天气</a>
       <a class="primary-navigation__ledger" id="ledger-navigation-link" href="#ledger" data-module="ledger" hidden>换算 · 记账</a>
     </nav>
   </header>
@@ -58,6 +57,12 @@
       </div>
       <div class="flight-carousel" id="flight-carousel" aria-label="航班卡片，可左右滑动"></div>
       <div class="carousel-dots" id="flight-dots" aria-hidden="true"></div>
+    </section>
+
+    <section class="section weather-section" id="weather" aria-labelledby="weather-title">
+      <div class="section-heading"><div><p class="section-kicker">CITY FORECAST</p><h2 id="weather-title">两城天气</h2></div></div>
+      <div class="weather-grid" id="weather-grid" aria-live="polite">正在获取天气…</div>
+      <p class="weather-source">当地时间 · 未来 7 天预报来自 <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>。天气可能变化，出行前请再查看。</p>
     </section>
 
     <section class="section route-section" id="route" aria-labelledby="route-title" data-module="overview" hidden>

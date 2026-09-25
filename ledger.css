@@ -7,13 +7,10 @@
   gap: 4px;
 }
 
-.travel-navigation, .travel-navigation-menu { display:flex; align-items:center; min-width:0; }
-.travel-navigation[hidden] { display:none; }
-.travel-navigation-menu { gap:2px; }
-.topbar .travel-navigation-menu a { position:relative; min-width:44px; padding-inline:5px; white-space:nowrap; }
-.topbar .travel-navigation-menu a[aria-current="location"],
+.topbar .travel-nav-link { position:relative; min-width:44px; padding-inline:5px; white-space:nowrap; }
+.topbar .travel-nav-link[aria-current="location"],
 .topbar .primary-navigation__ledger[aria-current="page"] { color: var(--ink); }
-.topbar .travel-navigation-menu a[aria-current="location"]::after,
+.topbar .travel-nav-link[aria-current="location"]::after,
 .topbar .primary-navigation__ledger[aria-current="page"]::after {
   content: "";
   position: absolute;
@@ -56,8 +53,16 @@ body[data-active-view="ledger"] .topbar { background: rgba(250, 251, 249, .93); 
 @media (max-width: 380px) {
   .wordmark span { display: none; }
   .topbar { padding-inline:8px; }
-  .topbar .travel-navigation-menu a { min-width:40px; padding-inline:3px; font-size:11px; }
+  .topbar .travel-nav-link { min-width:40px; padding-inline:3px; font-size:11px; }
   .topbar .primary-navigation__ledger { padding-inline:4px; font-size:11px; }
+}
+
+@media (max-width: 480px) {
+  .topbar { height:auto; min-height:84px; padding:var(--safe-top) 8px 0; flex-direction:column; align-items:stretch; }
+  .topbar .wordmark { min-height:30px; padding-left:4px; }
+  .topbar .primary-navigation { width:100%; justify-content:space-between; gap:0; }
+  .topbar .primary-navigation a { min-width:0; min-height:48px; padding-inline:3px; font-size:11px; }
+  .section { scroll-margin-top:90px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

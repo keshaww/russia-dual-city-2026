@@ -155,7 +155,42 @@
   let pendingNoteSave = null;
   let noteOpenRequest = 0;
   let mutationQueue = Promise.resolve();
-  let conversionDraft = { direction: "RUB-CNY", amount: "", rate: "" };
+  let conversionDraft = { direction: "RUB-CNY", amount: "" };
+  const rateCacheKey = "russia-dual-city-rub-cny-rate-v1";
+  let autoRate = null;
+  let rateRefreshing = false;
+  try {
+    const cached = JSON.parse(localStorage.getItem(rateCacheKey) || "null");
+    if (parseRate(cached?.rate) && typeof cached?.sourceDate === "string") autoRate = cached;
+  } catch { /* The converter can still fetch without browser storage. */ }
+
+  function currentRate() { return parseRate(autoRate?.rate); }
+  function todayUtc() { return new Date().toISOString().slice(0, 10); }
+
+  async function refreshRate(force = false) {
+    if (rateRefreshing || (!force && autoRate?.checkedOn === todayUtc())) return;
+    rateRefreshing = true;
+    try {
+      const response = await fetch("https://open.er-api.com/v6/latest/RUB", {
+        cache: "no-store", signal: AbortSignal.timeout(12000)
+      });
+      if (!response.ok) throw new Error(`Rate HTTP ${response.status}`);
+      const result = await response.json();
+      const rate = parseRate(result?.rates?.CNY);
+      const sourceDate = Date.parse(result?.time_last_update_utc || "");
+      if (result?.result !== "success" || !rate || !Number.isFinite(sourceDate)) throw new Error("Invalid rate response");
+      autoRate = { rate, sourceDate: new Date(sourceDate).toISOString().slice(0, 10), checkedOn: todayUtc() };
+      try { localStorage.setItem(rateCacheKey, JSON.stringify(autoRate)); } catch { /* Keep in memory. */ }
+    } catch (error) {
+      console.warn("Daily exchange rate unavailable", error);
+    } finally {
+      rateRefreshing = false;
+      if (ledgerData) {
+        captureBillDraft();
+        renderApp();
+      }
+    }
+  }
 
   function normalizeSearch(value) {
     return String(value || "")
@@ -690,7 +725,7 @@
                 <span class="ledger-converted-code">${escapeHtml(baseCurrency)}</span>
                 <input class="ledger-input" name="baseAmount" data-ledger-field="base-amount" type="text" inputmode="decimal" autocomplete="off" placeholder="手动填写换算后的总金额" value="${escapeAttribute(editingBill && isForeign ? centsToInput(editingBill.baseAmountCents) : draft?.baseAmount || "")}" ${isForeign ? "required" : ""}>
               </span>
-              <small class="ledger-field-help">${currency === "RUB" && baseCurrency === "CNY" && ledgerData.settings.rubToCnyRate ? "按已保存的自填汇率估算；可改为实际扣款金额" : "按实际付款金额手动填写"}</small>
+              <small class="ledger-field-help">${currency === "RUB" && baseCurrency === "CNY" && currentRate() ? "按自动汇率估算；可改为实际扣款金额" : "按实际付款金额手动填写"}</small>
             </label>
 
             <fieldset class="ledger-fieldset">
@@ -935,11 +970,10 @@
   }
 
   function renderConverter() {
-    const savedRate = ledgerData.settings.rubToCnyRate;
-    const rateText = conversionDraft.rate || (savedRate ? String(savedRate) : "");
-    const updated = ledgerData.settings.rateUpdatedAt;
-    const updatedLabel = updated && Number.isFinite(Date.parse(updated))
-      ? `上次保存：${new Date(updated).toLocaleString("zh-CN")}` : "尚未保存汇率";
+    const rate = currentRate();
+    const updatedLabel = rate
+      ? `1 RUB ≈ ${rate} CNY · 数据日期 ${autoRate.sourceDate}${autoRate.checkedOn === todayUtc() ? "" : " · 离线缓存"}`
+      : "正在获取今日汇率…";
     return `<section class="ledger-converter" aria-labelledby="ledger-converter-title">
       <div class="ledger-section-heading"><div><p class="ledger-section-kicker">RUB ⇄ CNY</p><h2 id="ledger-converter-title">卢布换算</h2></div></div>
       <form data-ledger-form="converter" class="ledger-converter-form">
@@ -948,12 +982,9 @@
           <option value="CNY-RUB" ${conversionDraft.direction === "CNY-RUB" ? "selected" : ""}>人民币 → 卢布</option>
         </select></label>
         <label class="ledger-field"><span class="ledger-field-label">金额</span><input class="ledger-input" name="amount" data-converter-amount type="text" inputmode="decimal" autocomplete="off" placeholder="例如 1000" value="${escapeAttribute(conversionDraft.amount)}"></label>
-        <label class="ledger-field ledger-converter-rate"><span class="ledger-field-label">自填汇率：1 RUB = ? CNY</span><input class="ledger-input" name="rate" data-converter-rate type="text" inputmode="decimal" autocomplete="off" placeholder="输入实际使用的汇率" value="${escapeAttribute(rateText)}"></label>
-        <button type="submit" class="ledger-secondary-button">保存汇率</button>
       </form>
-      ${savedRate ? `<button type="button" class="ledger-text-button ledger-clear-rate" data-ledger-action="clear-rate">清除已存汇率</button>` : ""}
       <output class="ledger-converter-result" data-converter-result aria-live="polite"></output>
-      <p class="ledger-converter-note">${escapeHtml(updatedLabel)} · 汇率由你填写，页面不会自动获取实时牌价；账单按实际扣款金额核对。</p>
+      <p class="ledger-converter-note">${escapeHtml(updatedLabel)} · 每日自动更新，来源：<a href="https://www.exchangerate-api.com/" target="_blank" rel="noopener noreferrer">ExchangeRate-API</a>。仅作估算，账单可填实际扣款。</p>
     </section>`;
   }
 
@@ -1305,10 +1336,10 @@
     const form = ledgerRoot?.querySelector('[data-ledger-form="converter"]');
     const result = form?.parentElement?.querySelector('[data-converter-result]');
     if (!form || !result) return;
-    const rate = parseRate(form.elements.rate.value);
+    const rate = currentRate();
     const amountCents = toCents(form.elements.amount.value);
     const direction = form.elements.direction.value;
-    if (!rate) { result.textContent = "填写汇率后即可换算"; return; }
+    if (!rate) { result.textContent = "汇率暂不可用，请联网后重试"; return; }
     if (amountCents === null) { result.textContent = "输入金额后显示换算结果"; return; }
     const converted = direction === "CNY-RUB" ? amountCents / rate : amountCents * rate;
     result.textContent = `约 ${formatMoney(Math.round(converted), direction === "CNY-RUB" ? "RUB" : "CNY")}`;
@@ -1319,7 +1350,7 @@
     const currency = form.elements.currency?.value;
     const converted = form.elements.baseAmount;
     const amountCents = toCents(form.elements.originalAmount?.value);
-    const rate = ledgerData.settings.rubToCnyRate;
+    const rate = currentRate();
     if (currency !== "RUB" || !rate || !converted || !amountCents) return;
     if (converted.value && converted.dataset.auto !== "true") return;
     converted.value = centsToInput(Math.round(amountCents * rate));
@@ -1361,8 +1392,8 @@
       if (!isForeign) convertedInput.value = "";
     }
     const help = convertedField?.querySelector(".ledger-field-help");
-    if (help) help.textContent = select.value === "RUB" && ledgerData.settings.baseCurrency === "CNY" && ledgerData.settings.rubToCnyRate
-      ? "按已保存的自填汇率估算；可改为实际扣款金额" : "按实际付款金额手动填写";
+    if (help) help.textContent = select.value === "RUB" && ledgerData.settings.baseCurrency === "CNY" && currentRate()
+      ? "按自动汇率估算；可改为实际扣款金额" : "按实际付款金额手动填写";
     syncBillConversion(form);
     captureBillDraft();
     syncSplitSummary();
@@ -1788,12 +1819,6 @@
     } else if (action === "open-settings") {
       captureBillDraft();
       showDialog("settings");
-    } else if (action === "clear-rate") {
-      captureBillDraft();
-      conversionDraft.rate = "";
-      void mutateData((next) => { next.settings.rubToCnyRate = null; next.settings.rateUpdatedAt = ""; }, {
-        reason: "rate-cleared", message: "已清除自填汇率"
-      });
     } else if (action === "edit-member") {
       captureBillDraft();
       editingMemberId = button.dataset.ledgerId || null;
@@ -1855,7 +1880,7 @@
   function handleRootInput(event) {
     if (event.target.closest('[data-ledger-form="converter"]')) {
       const form = event.target.closest("form");
-      conversionDraft = { direction: form.elements.direction.value, amount: form.elements.amount.value, rate: form.elements.rate.value };
+      conversionDraft = { direction: form.elements.direction.value, amount: form.elements.amount.value };
       syncConverter();
       return;
     }
@@ -1878,7 +1903,7 @@
   function handleRootChange(event) {
     if (event.target.closest('[data-ledger-form="converter"]')) {
       const form = event.target.closest("form");
-      conversionDraft = { direction: form.elements.direction.value, amount: form.elements.amount.value, rate: form.elements.rate.value };
+      conversionDraft = { direction: form.elements.direction.value, amount: form.elements.amount.value };
       syncConverter();
       return;
     }
@@ -1893,16 +1918,7 @@
     const form = event.target.closest("form[data-ledger-form]");
     if (!form || !ledgerRoot.contains(form)) return;
     event.preventDefault();
-    if (form.dataset.ledgerForm === "converter") {
-      const rate = parseRate(form.elements.rate.value);
-      if (!rate) { setNotice("请输入大于 0 的汇率，最多 6 位小数。"); form.elements.rate.focus(); return; }
-      captureBillDraft();
-      conversionDraft = { direction: form.elements.direction.value, amount: form.elements.amount.value, rate: String(rate) };
-      await mutateData((next) => { next.settings.rubToCnyRate = rate; next.settings.rateUpdatedAt = new Date().toISOString(); }, {
-        reason: "rate-updated", message: "汇率已保存在当前设备"
-      });
-      return;
-    }
+    if (form.dataset.ledgerForm === "converter") return;
     if (form.dataset.ledgerForm === "bill-note") {
       await submitBillNote(form);
       return;
@@ -1983,6 +1999,10 @@
     document.addEventListener("pointerdown", handleDocumentPointerDown);
     initialized = true;
     renderApp();
+    void refreshRate();
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) void refreshRate();
+    });
     ledgerRoot.removeAttribute("aria-busy");
     return deepClone(ledgerData);
   }

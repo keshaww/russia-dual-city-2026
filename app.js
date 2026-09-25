@@ -454,6 +454,14 @@ function hubTransfersMarkup(day) {
     </article>`).join("")}</section>`;
 }
 
+function dailyTransportMarkup(day) {
+  const legs = day.transportLegs || [];
+  if (!legs.length) return "";
+  return `<section class="daily-transport" aria-label="今日交通"><h3>今日交通</h3><ol>${legs.map((leg) => `
+    <li><div class="daily-transport__route"><strong>${escapeHtml(leg.from)} → ${escapeHtml(leg.to)}</strong><span>${escapeHtml(leg.mode)}</span></div>
+    <p>${escapeHtml(leg.note)}</p></li>`).join("")}</ol></section>`;
+}
+
 function dayCard(day) {
   const today = todayForTrip();
   const isToday = day.date === today;
@@ -461,7 +469,7 @@ function dayCard(day) {
   const schedule = day.schedule.map((item) => {
     const destinations = navigationDestinations(item);
     const mapLinks = destinations.map((destination) => `
-      <button type="button" class="schedule-map-link" data-map-query="${escapeHtml(destination.query)}" data-map-url="${escapeHtml(destination.url || "")}" data-map-label="${escapeHtml(destination.label)}" aria-haspopup="dialog" aria-controls="place-map" aria-label="查看 ${escapeHtml(destination.label)} 的地图">📍 ${escapeHtml(destination.label)}</button>
+      <button type="button" class="schedule-map-link" data-map-id="${escapeHtml(destination.id || "")}" data-map-query="${escapeHtml(destination.query)}" data-map-url="${escapeHtml(destination.url || "")}" data-map-label="${escapeHtml(destination.label)}" aria-haspopup="dialog" aria-controls="place-map" aria-label="查看 ${escapeHtml(destination.label)} 的地图">📍 ${escapeHtml(destination.label)}</button>
     `).join("");
     const scheduleTickets = ticketsForSchedule(day, item).map(inlineTicketMarkup).join("");
     return `
@@ -496,6 +504,7 @@ function dayCard(day) {
       </button>
       <div class="day-detail" id="day-detail-${day.day}" ${expanded ? "" : "hidden"}>
         <ol class="schedule">${schedule}</ol>
+        ${dailyTransportMarkup(day)}
         ${hubTransfersMarkup(day)}
         ${costs ? `<div class="costs">${costs}</div>` : ""}
         ${notes.map((note) => `<p class="detail-note">${escapeHtml(note)}</p>`).join("")}
@@ -936,12 +945,12 @@ function setupTicketDialog() {
 
 function setupPlaceMap() {
   const panel = $("#place-map");
-  const frame = $("#place-map-frame");
+  const preview = $("#place-map-preview");
   let opener;
   let previousOverflow = "";
   const close = () => {
     panel.hidden = true;
-    frame.src = "about:blank";
+    preview.replaceChildren();
     document.body.style.overflow = previousOverflow;
     opener?.focus();
   };
@@ -951,9 +960,11 @@ function setupPlaceMap() {
     event.preventDefault();
     opener = link;
     $("#place-map-title").textContent = link.dataset.mapLabel;
-    $("#place-map-external").href = safeExternalUrl(link.dataset.mapUrl) || mapsSearch(link.dataset.mapQuery);
-    frame.title = `${link.dataset.mapLabel} Google Maps`;
-    frame.src = `https://maps.google.com/maps?q=${encodeURIComponent(link.dataset.mapQuery)}&output=embed`;
+    const place = (state.data.map.places || []).find((item) => item.id === link.dataset.mapId);
+    preview.innerHTML = geoPlacePreviewMarkup(place, link.dataset.mapLabel);
+    $("#place-map-external").href = place && geoPoint(place)
+      ? `https://www.openstreetmap.org/?mlat=${place.geo.lat}&mlon=${place.geo.lng}#map=15/${place.geo.lat}/${place.geo.lng}`
+      : `https://www.openstreetmap.org/search?query=${encodeURIComponent(link.dataset.mapQuery)}`;
     previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     panel.hidden = false;
@@ -1036,3 +1047,4 @@ async function init() {
 }
 
 document.addEventListener("DOMContentLoaded", init);
+

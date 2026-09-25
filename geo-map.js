@@ -3,6 +3,20 @@ const geoMapInstances = new WeakMap();
 const GEO_TILE_SIZE = 256;
 const GEO_MIN_ZOOM = 4;
 const GEO_MAX_ZOOM = 17;
+let geoMapOffline = false;
+
+function geoPlacePreviewMarkup(place, label) {
+  const point = geoPoint(place);
+  return `<div class="place-coordinate-preview"><div class="place-coordinate-preview__grid" aria-hidden="true"><span class="place-coordinate-preview__pin">●</span></div>
+    <div class="place-coordinate-preview__details"><strong>${escapeHtml(label)}</strong>
+    <p>${point ? `坐标 ${point.lat.toFixed(5)}°, ${point.lng.toFixed(5)}°` : "此地点尚无已核实坐标"}</p>
+    <small>站内点位视图无需加载境外地图；不显示道路与实时导航。</small></div></div>`;
+}
+
+function setGeoMapsOffline(offline) {
+  geoMapOffline = offline;
+  document.querySelectorAll(".geo-map").forEach((element) => geoMapInstances.get(element)?.setOffline(offline));
+}
 
 function geoPoint(place) {
   const lat = Number(place?.geo?.lat);
@@ -34,10 +48,11 @@ function geoMapMarkup(source, route, expanded = false) {
       <svg class="geo-map-routes" aria-hidden="true"></svg>
       <div class="geo-map-markers"></div>
       <div class="geo-map-controls"><button type="button" data-geo-zoom="in" aria-label="放大地图">+</button><button type="button" data-geo-zoom="out" aria-label="缩小地图">−</button></div>
+      <button type="button" class="geo-map-mode" data-geo-mode>切换点位图</button>
       <div class="geo-map-attribution"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a></div>
-      <div class="geo-map-error" hidden>底图暂时无法加载。<a href="https://www.openstreetmap.org/" target="_blank" rel="noopener noreferrer">打开 OpenStreetMap ↗</a></div>
+      <div class="geo-map-error" hidden>在线底图无法加载，已切换到点位图。</div>
     </div>
-    <div class="map-utility"><span>真实地理底图与地点位置 · 彩色直线仅表示游览顺序，非实际行车或步行路线</span>${expanded ? "" : `<button type="button" data-expand-geo-map="${escapeHtml(source.id)}" data-expand-geo-day="${day}">放大 ↗</button>`}</div>
+    <div class="map-utility"><span>地点按真实经纬度定位 · 点位图不含道路底图 · 彩色直线只表示游览顺序</span>${expanded ? "" : `<button type="button" data-expand-geo-map="${escapeHtml(source.id)}" data-expand-geo-day="${day}">放大 ↗</button>`}</div>
   </div>`;
 }
 
@@ -60,8 +75,22 @@ function initializeGeoMaps(root = document) {
     const svg = element.querySelector(".geo-map-routes");
     const markers = element.querySelector(".geo-map-markers");
     const error = element.querySelector(".geo-map-error");
-    const map = { element, zoom: 6, center: { lat: 57.8, lng: 34.1 }, tiles, svg, markers, error, routes, visiblePlaces, source, day, loaded: false, failed: 0 };
+    const modeButton = element.querySelector("[data-geo-mode]");
+    const map = { element, zoom: 6, center: { lat: 57.8, lng: 34.1 }, tiles, svg, markers, error, routes, visiblePlaces, source, day, loaded: false, failed: 0, offline: geoMapOffline, timer: null };
     geoMapInstances.set(element, map);
+    map.setOffline = (offline, failed = false) => {
+      map.offline = offline;
+      element.classList.toggle("is-offline", offline);
+      modeButton.textContent = offline ? "尝试在线底图" : "切换点位图";
+      error.hidden = !failed;
+      clearTimeout(map.timer);
+      map.timer = null;
+      if (offline) tiles.replaceChildren();
+      else { map.loaded = false; map.failed = 0; draw(); }
+    };
+    element.classList.toggle("is-offline", geoMapOffline);
+    modeButton.textContent = geoMapOffline ? "尝试在线底图" : "切换点位图";
+    modeButton.addEventListener("click", (event) => { event.stopPropagation(); setGeoMapsOffline(!map.offline); });
 
     function fit() {
       const width = element.clientWidth || 360;
@@ -96,7 +125,13 @@ function initializeGeoMaps(root = document) {
       const firstY = Math.floor((center.y - height / 2) / GEO_TILE_SIZE);
       const lastY = Math.floor((center.y + height / 2) / GEO_TILE_SIZE);
       const needed = new Set();
-      for (let x = firstX; x <= lastX; x++) for (let y = firstY; y <= lastY; y++) {
+      if (!map.offline && !map.loaded && !map.timer) map.timer = setTimeout(() => {
+        if (!map.loaded && !map.offline) {
+          setGeoMapsOffline(true);
+          error.hidden = false;
+        }
+      }, 4500);
+      for (let x = firstX; !map.offline && x <= lastX; x++) for (let y = firstY; y <= lastY; y++) {
         if (y < 0 || y >= worldTiles) continue;
         const key = `${map.zoom}/${x}/${y}`;
         needed.add(key);
@@ -109,14 +144,14 @@ function initializeGeoMaps(root = document) {
           const tilePath = `${map.zoom}/${((x % worldTiles) + worldTiles) % worldTiles}/${y}.png`;
           image.dataset.tilePath = tilePath;
           image.src = `https://tile.openstreetmap.org/${tilePath}`;
-          image.addEventListener("load", () => { map.loaded = true; error.hidden = true; });
+          image.addEventListener("load", () => { map.loaded = true; clearTimeout(map.timer); map.timer = null; error.hidden = true; });
           image.addEventListener("error", () => {
             if (image.dataset.fallback !== "de") {
               image.dataset.fallback = "de";
               image.src = `https://tile.openstreetmap.de/${image.dataset.tilePath}`;
               return;
             }
-            if (!map.loaded && ++map.failed >= 2) error.hidden = false;
+            if (!map.loaded && ++map.failed >= 2) { setGeoMapsOffline(true); error.hidden = false; }
           });
           tiles.append(image);
         }
@@ -187,3 +222,4 @@ function initializeGeoMaps(root = document) {
     fit();
   });
 }
+

@@ -104,7 +104,7 @@ function travelMapMarkup(source, route) {
     const place = placeLayers.find((item) => item.id === placeId);
     if (!place) return "";
     const role = dailyPointRole(layout, placeId, index);
-    return `<button type="button" class="map-place-dot" style="${position(place.x, place.y)}" data-map-region="${escapeHtml(source.id)}" data-place-id="${placeId}" data-place-day="${day.day}" data-place-role="${role}" aria-label="${role}：${escapeHtml(placeOptions(source, placeId)[0][0])}，打开 Google Maps" aria-haspopup="dialog" aria-expanded="false"><span></span></button>`;
+    return `<button type="button" class="map-place-dot" style="${position(place.x, place.y)}" data-map-region="${escapeHtml(source.id)}" data-place-id="${placeId}" data-place-day="${day.day}" data-place-role="${role}" aria-label="${role}：${escapeHtml(placeOptions(source, placeId)[0][0])}，查看地点坐标" aria-haspopup="dialog" aria-expanded="false"><span></span></button>`;
   }).join("") : "";
   const transport = route && layout ? layout.transport.map((pin, index) => {
     const item = scheduleItemsForPin(day, pin)[0];
@@ -182,11 +182,10 @@ function setupRouteExplorer() {
       const place = (state.data.map.places || []).find((item) => item.id === placePin.dataset.placeId);
       const lat = Number(place?.geo?.lat);
       const lng = Number(place?.geo?.lng);
-      const marker = Number.isFinite(lat) && Number.isFinite(lng) ? `${lat}%2C${lng}` : "";
-      const bbox = marker ? `${lng - 0.012}%2C${lat - 0.007}%2C${lng + 0.012}%2C${lat + 0.007}` : "";
-      const osmUrl = marker ? `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=15/${lat}/${lng}` : "https://www.openstreetmap.org/";
+      const marker = Number.isFinite(lat) && Number.isFinite(lng);
+      const osmUrl = marker ? `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=15/${lat}/${lng}` : `https://www.openstreetmap.org/search?query=${encodeURIComponent(label)}`;
       showPopover(placePin, `<header><small>${escapeHtml(placePin.dataset.placeRole)}</small><strong>${escapeHtml(label)}</strong></header>
-        ${marker ? `<iframe title="${escapeHtml(label)} OpenStreetMap" src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${marker}" referrerpolicy="no-referrer-when-downgrade" loading="lazy"></iframe>` : ""}
+        ${geoPlacePreviewMarkup(place, label)}
         <footer><a href="${osmUrl}" target="_blank" rel="noopener noreferrer">用 OpenStreetMap 打开 ↗</a><small>实际导航请核对当地实时交通信息。</small></footer>`, true);
       return;
     }
@@ -196,16 +195,6 @@ function setupRouteExplorer() {
       const source = travelMapSource(state.data?.routeMap, pin.dataset.mapRegion);
       const group = dailyMapLayoutFor(source, day.day).transport[Number(pin.dataset.transportGroup)];
       showPopover(pin, scheduleItemsForPin(day, group).map((item) => `<div class="transport-leg"><strong>${escapeHtml(transportNames[item.type] || "交通")} · ${escapeHtml(item.time)}</strong><p>${escapeHtml(item.text)}</p></div>`).join(""));
-      return;
-    }
-    const option = event.target.closest("[data-popup-query]");
-    if (option && popover) {
-      const query = option.dataset.popupQuery;
-      const label = option.dataset.popupLabel;
-      $$("[data-popup-query]", popover).forEach((button) => button.setAttribute("aria-pressed", String(button === option)));
-      $("[data-popup-place-label]", popover).textContent = label;
-      const frame = $("iframe", popover); frame.title = `${label} Google Maps`; frame.src = `https://maps.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
-      $("[data-popup-external]", popover).href = mapsSearch(query);
       return;
     }
     if (event.target.closest(".route-popover")) return;
@@ -244,3 +233,4 @@ function setupRouteExplorer() {
   $("#map-dialog").addEventListener("close", () => closePopover());
   $$(".day-detail:not([hidden])").forEach(activateDayMaps);
 }
+

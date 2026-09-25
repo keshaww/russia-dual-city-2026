@@ -252,6 +252,38 @@
       "notes": [
         "当日主线：两段航班；抵达后红场夜景（视体力）",
         "行程强度：低；状态：已预订"
+      ],
+      "transportLegs": [
+        {
+          "from": "深圳市区",
+          "to": "宝安机场 T3",
+          "mode": "地铁或网约车",
+          "note": "按 05:00 到机场倒推；清晨先查地铁首班车。"
+        },
+        {
+          "from": "深圳",
+          "to": "北京大兴",
+          "mode": "航班 MU6662",
+          "note": "联程转机 1 小时 45 分，确认行李直挂。"
+        },
+        {
+          "from": "北京大兴",
+          "to": "莫斯科 SVO C",
+          "mode": "航班 MU2075",
+          "note": "落地后预留入境、取行李时间。"
+        },
+        {
+          "from": "SVO C",
+          "to": "索科尔尼基酒店",
+          "mode": "出租车优先",
+          "note": "携行李直达；省钱方案为机场快线到白俄罗斯站，再换地铁 5 号线和 1 号线。"
+        },
+        {
+          "from": "酒店",
+          "to": "红场夜景（可选）",
+          "mode": "地铁或打车",
+          "note": "长途飞行后视体力决定是否外出。"
+        }
       ]
     },
     {
@@ -294,6 +326,38 @@
       "notes": [
         "当日主线：特列季亚科夫画廊—救世主大教堂—阿尔巴特—麻雀山",
         "行程强度：中；状态：待预约"
+      ],
+      "transportLegs": [
+        {
+          "from": "酒店",
+          "to": "特列季亚科夫画廊",
+          "mode": "地铁＋步行",
+          "note": "Sokolniki 出发，终点可选 Tretyakovskaya；出站后按入口导航。"
+        },
+        {
+          "from": "画廊",
+          "to": "救世主大教堂／牧首桥",
+          "mode": "步行或短程打车",
+          "note": "跨河移动，午餐及步行时间一并预留。"
+        },
+        {
+          "from": "大教堂",
+          "to": "老阿尔巴特街",
+          "mode": "步行",
+          "note": "市中心路段，雨天可改短程打车。"
+        },
+        {
+          "from": "阿尔巴特",
+          "to": "麻雀山",
+          "mode": "地铁或打车",
+          "note": "距离较远，傍晚优先按实时交通选；结束后乘地铁或打车回酒店。"
+        },
+        {
+          "from": "麻雀山",
+          "to": "酒店",
+          "mode": "地铁或打车",
+          "note": "晚间根据体力和实时路况决定。"
+        }
       ]
     },
     {
@@ -336,6 +400,32 @@
       "notes": [
         "当日主线：克里姆林宫—军械库—红场—圣瓦西里—扎里亚季耶",
         "行程强度：高；状态：待预约"
+      ],
+      "transportLegs": [
+        {
+          "from": "酒店",
+          "to": "克里姆林宫入口",
+          "mode": "地铁＋步行",
+          "note": "从 Sokolniki 乘地铁进市中心；以票面指定入口为准。"
+        },
+        {
+          "from": "克里姆林宫",
+          "to": "军械库",
+          "mode": "步行",
+          "note": "同一区域，按各自入场时段与入口指引移动。"
+        },
+        {
+          "from": "亚历山大花园",
+          "to": "圣瓦西里／古姆／扎里亚季耶",
+          "mode": "步行",
+          "note": "红场周边连续游览；活动封路时按现场指引绕行。"
+        },
+        {
+          "from": "扎里亚季耶",
+          "to": "酒店",
+          "mode": "地铁或打车",
+          "note": "晚间按体力和道路情况选择。"
+        }
       ]
     },
     {
@@ -385,6 +475,38 @@
       "notes": [
         "当日主线：白天列车；圣以撒—青铜骑士—新荷兰岛",
         "行程强度：中；状态：已预订"
+      ],
+      "transportLegs": [
+        {
+          "from": "酒店",
+          "to": "莫斯科列宁格勒站",
+          "mode": "地铁 1 号线或打车",
+          "note": "Sokolniki 至 Komsomolskaya；带行李争取 08:30 左右到站。"
+        },
+        {
+          "from": "莫斯科",
+          "to": "圣彼得堡",
+          "mode": "760A 列车",
+          "note": "09:25—13:28，携带订票护照。"
+        },
+        {
+          "from": "圣彼得堡莫斯科站",
+          "to": "Helen Hotel",
+          "mode": "打车优先",
+          "note": "带行李直达 Bol'shaya Morskaya 28/13。"
+        },
+        {
+          "from": "酒店",
+          "to": "圣以撒／青铜骑士／新荷兰岛",
+          "mode": "步行",
+          "note": "市中心连续游览；雨天可用短程打车。"
+        },
+        {
+          "from": "新荷兰岛",
+          "to": "Helen Hotel",
+          "mode": "步行或短程打车",
+          "note": "结束后返回酒店休息。"
+        }
       ]
     },
     {
@@ -424,6 +546,32 @@
       "notes": [
         "当日主线：滴血救世主—冬宫—宫殿广场—喀山—涅瓦大街",
         "行程强度：高；状态：待预约"
+      ],
+      "transportLegs": [
+        {
+          "from": "Helen Hotel",
+          "to": "滴血救世主教堂",
+          "mode": "步行或短程打车",
+          "note": "市中心路段，按当天体力选择。"
+        },
+        {
+          "from": "滴血救世主",
+          "to": "冬宫",
+          "mode": "步行",
+          "note": "沿市中心向宫殿广场方向移动。"
+        },
+        {
+          "from": "冬宫",
+          "to": "宫殿广场／喀山／涅瓦大街",
+          "mode": "步行",
+          "note": "景点密集；走不动时可从涅瓦大街打车回酒店。"
+        },
+        {
+          "from": "涅瓦大街",
+          "to": "Helen Hotel",
+          "mode": "步行或打车",
+          "note": "晚间按体力和天气选择。"
+        }
       ]
     },
     {
@@ -448,6 +596,26 @@
       "notes": [
         "当日主线：皇村：叶卡捷琳娜宫—琥珀厅—花园；晚间休息",
         "行程强度：中；状态：待预约"
+      ],
+      "transportLegs": [
+        {
+          "from": "Helen Hotel",
+          "to": "皇村叶卡捷琳娜宫",
+          "mode": "郊区火车＋短途车",
+          "note": "先到维捷布斯克站，乘车至 Tsarskoye Selo，再乘当地公交或打车到宫殿；也可从酒店直接打车。"
+        },
+        {
+          "from": "宫殿",
+          "to": "花园",
+          "mode": "步行",
+          "note": "园内活动，留意宫殿票面入场时段。"
+        },
+        {
+          "from": "皇村",
+          "to": "Helen Hotel",
+          "mode": "原路返回或打车",
+          "note": "返城后不再安排晚间景点。"
+        }
       ]
     },
     {
@@ -481,6 +649,32 @@
       "notes": [
         "当日主线：彼得霍夫：下花园—喷泉—大宫殿；晚间马林斯基剧院",
         "行程强度：高；状态：待确认"
+      ],
+      "transportLegs": [
+        {
+          "from": "Helen Hotel",
+          "to": "彼得霍夫下花园",
+          "mode": "打车优先",
+          "note": "跨城郊往返，出发前核对下花园入口及道路时间；水翼船不预设 10 月运营。"
+        },
+        {
+          "from": "下花园／大宫殿",
+          "to": "市区",
+          "mode": "打车或陆路公交＋地铁",
+          "note": "按演出票面开场时间倒推，计划 15:30 左右离园。"
+        },
+        {
+          "from": "市区",
+          "to": "马林斯基剧院",
+          "mode": "打车或地铁＋步行",
+          "note": "核对票面场馆（历史舞台／新舞台等），至少提前 30 分钟抵达。"
+        },
+        {
+          "from": "马林斯基剧院",
+          "to": "Helen Hotel",
+          "mode": "打车或步行",
+          "note": "演出散场较晚时优先打车；步行前核对天气与距离。"
+        }
       ]
     },
     {
@@ -539,6 +733,32 @@
       "notes": [
         "当日主线：退房寄存—法贝热—俄罗斯博物馆—夜卧列车",
         "行程强度：中；状态：已预订"
+      ],
+      "transportLegs": [
+        {
+          "from": "Helen Hotel",
+          "to": "法贝热博物馆",
+          "mode": "步行或地铁",
+          "note": "退房后行李寄存在酒店。"
+        },
+        {
+          "from": "法贝热",
+          "to": "俄罗斯博物馆",
+          "mode": "步行",
+          "note": "两馆位于市中心，可顺路安排午餐。"
+        },
+        {
+          "from": "俄罗斯博物馆",
+          "to": "酒店取行李",
+          "mode": "步行或打车",
+          "note": "20:45 前返回酒店，避免晚间临时赶路。"
+        },
+        {
+          "from": "Helen Hotel",
+          "to": "圣彼得堡莫斯科站",
+          "mode": "打车优先",
+          "note": "携行李 22:15 前到站，乘 23:30 夜卧列车。"
+        }
       ]
     },
     {
@@ -573,6 +793,26 @@
       "notes": [
         "当日主线：08:30抵达；早餐后直奔谢列梅捷沃机场",
         "行程强度：低；状态：已预订"
+      ],
+      "transportLegs": [
+        {
+          "from": "莫斯科列宁格勒站",
+          "to": "白俄罗斯站",
+          "mode": "地铁 5 号环线",
+          "note": "从 Komsomolskaya 到 Belorusskaya，留意站内换乘和行李。"
+        },
+        {
+          "from": "白俄罗斯站",
+          "to": "SVO 机场 C 航站楼",
+          "mode": "Aeroexpress＋步行",
+          "note": "出发前核对官方班次和机场航站楼导向；若晚点可改打车。"
+        },
+        {
+          "from": "莫斯科",
+          "to": "北京大兴",
+          "mode": "航班 MU2076",
+          "note": "17:15 起飞，提前办理值机。"
+        }
       ]
     },
     {
@@ -595,6 +835,20 @@
       "notes": [
         "当日主线：北京大兴转机，12:25抵达深圳",
         "行程强度：低；状态：已预订"
+      ],
+      "transportLegs": [
+        {
+          "from": "北京大兴机场",
+          "to": "深圳宝安机场 T3",
+          "mode": "航班 MU6295",
+          "note": "05:30 到达北京后办理国内段转机，09:00 起飞。"
+        },
+        {
+          "from": "宝安机场 T3",
+          "to": "深圳市内目的地",
+          "mode": "地铁或网约车",
+          "note": "12:25 抵达后按实际行李、交通与住址选择。"
+        }
       ]
     }
   ],
@@ -772,9 +1026,18 @@
       "recommended": "入境、取行李后按机场标识到官方出租车上车点，用 Yandex Go 输入 Rusakovskaya Ulitsa 24；落地当天带行李，直达酒店最省换乘。以 App 实时报价和车牌为准。",
       "alternative": "公共交通：按机场指示乘 Aeroexpress 至白俄罗斯站，再由 Belorusskaya 站乘地铁 5 号环线到 Komsomolskaya，换 1 号线到 Sokolniki，步行至酒店。购票前核对机场出发站和末班车。",
       "links": [
-        { "label": "机场快线官网", "url": "https://aeroexpress.ru/en/" },
-        { "label": "莫斯科交通官网", "url": "https://transport.mos.ru/en/" },
-        { "label": "查看酒店位置", "url": "https://www.openstreetmap.org/search?query=Rusakovskaya%20Ulitsa%2024%20Moscow" }
+        {
+          "label": "机场快线官网",
+          "url": "https://aeroexpress.ru/en/"
+        },
+        {
+          "label": "莫斯科交通官网",
+          "url": "https://transport.mos.ru/en/"
+        },
+        {
+          "label": "查看酒店位置",
+          "url": "https://www.openstreetmap.org/search?query=Rusakovskaya%20Ulitsa%2024%20Moscow"
+        }
       ]
     },
     {
@@ -783,8 +1046,14 @@
       "recommended": "从 Sokolniki 地铁站乘 1 号线至 Komsomolskaya，按“Ленинградский вокзал”指示出站。带大件行李或下雨可改用打车；以 08:30 抵站安检为目标。",
       "alternative": "核对列车票面车站和站台，别与圣彼得堡的莫斯科站混淆。",
       "links": [
-        { "label": "俄铁官网", "url": "https://www.rzd.ru/" },
-        { "label": "莫斯科交通官网", "url": "https://transport.mos.ru/en/" }
+        {
+          "label": "俄铁官网",
+          "url": "https://www.rzd.ru/"
+        },
+        {
+          "label": "莫斯科交通官网",
+          "url": "https://transport.mos.ru/en/"
+        }
       ]
     },
     {
@@ -793,8 +1062,14 @@
       "recommended": "13:28 抵站后，从车站正规出口叫车至 Bol'shaya Morskaya 28/13；带行李建议直达，酒店确认入住后再去圣以撒大教堂。",
       "alternative": "若不打车，可用当地地图查询当日公交或地铁组合；车站至酒店步行距离较长，带行李不推荐步行。",
       "links": [
-        { "label": "查看酒店位置", "url": "https://www.openstreetmap.org/search?query=Bolshaya%20Morskaya%2028%2F13%20Saint%20Petersburg" },
-        { "label": "圣彼得堡交通官网", "url": "https://orgp.spb.ru/" }
+        {
+          "label": "查看酒店位置",
+          "url": "https://www.openstreetmap.org/search?query=Bolshaya%20Morskaya%2028%2F13%20Saint%20Petersburg"
+        },
+        {
+          "label": "圣彼得堡交通官网",
+          "url": "https://orgp.spb.ru/"
+        }
       ]
     },
     {
@@ -803,8 +1078,14 @@
       "recommended": "从彼得霍夫回到市区后先按演出票面场馆地址前往剧院；返程方式与离园时间要以演出开场时间倒推。",
       "alternative": "不要预设水翼船在 10 月仍运营。优先在博物馆交通页核对陆路方案和当天班次。",
       "links": [
-        { "label": "彼得霍夫官网", "url": "https://en.peterhofmuseum.ru/" },
-        { "label": "马林斯基演出官网", "url": "https://www.mariinsky.ru/en/" }
+        {
+          "label": "彼得霍夫官网",
+          "url": "https://en.peterhofmuseum.ru/"
+        },
+        {
+          "label": "马林斯基演出官网",
+          "url": "https://www.mariinsky.ru/en/"
+        }
       ]
     },
     {
@@ -813,8 +1094,14 @@
       "recommended": "20:45 在酒店取行李后，直接叫车到 Московский вокзал（莫斯科站），22:15 前抵站安检；夜卧列车 23:30 发车。",
       "alternative": "若道路拥堵，用当地地图核对地铁方案并预留带行李的进站时间。",
       "links": [
-        { "label": "俄铁官网", "url": "https://www.rzd.ru/" },
-        { "label": "圣彼得堡交通官网", "url": "https://orgp.spb.ru/" }
+        {
+          "label": "俄铁官网",
+          "url": "https://www.rzd.ru/"
+        },
+        {
+          "label": "圣彼得堡交通官网",
+          "url": "https://orgp.spb.ru/"
+        }
       ]
     },
     {
@@ -823,8 +1110,14 @@
       "recommended": "抵达后从 Komsomolskaya 乘地铁 5 号环线至 Belorusskaya，在白俄罗斯站换 Aeroexpress 前往机场；下车后按航站楼指示前往 C 航站楼。以官方实时班次和航站楼信息为准。",
       "alternative": "携带大件行李也可直接打车到 SVO C，但早高峰道路时间不稳定；17:15 国际航班请留足值机和边检时间。",
       "links": [
-        { "label": "机场快线官网", "url": "https://aeroexpress.ru/en/" },
-        { "label": "莫斯科交通官网", "url": "https://transport.mos.ru/en/" }
+        {
+          "label": "机场快线官网",
+          "url": "https://aeroexpress.ru/en/"
+        },
+        {
+          "label": "莫斯科交通官网",
+          "url": "https://transport.mos.ru/en/"
+        }
       ]
     }
   ],
@@ -2216,3 +2509,4 @@
     ]
   }
 }
+

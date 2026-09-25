@@ -80,5 +80,6 @@
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden && cities.some((city) => Date.now() - (cache[city.name]?.fetchedAt || 0) > 60 * 60 * 1000)) void refresh();
   });
+  setInterval(() => { if (!document.hidden) void refresh(); }, 60 * 60 * 1000);
 })();
 

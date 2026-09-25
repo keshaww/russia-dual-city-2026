@@ -159,6 +159,7 @@
   const rateCacheKey = "russia-dual-city-rub-cny-rate-v1";
   let autoRate = null;
   let rateRefreshing = false;
+  let rateUnavailable = false;
   try {
     const cached = JSON.parse(localStorage.getItem(rateCacheKey) || "null");
     if (parseRate(cached?.rate) && typeof cached?.sourceDate === "string") autoRate = cached;
@@ -180,8 +181,10 @@
       const sourceDate = Date.parse(result?.time_last_update_utc || "");
       if (result?.result !== "success" || !rate || !Number.isFinite(sourceDate)) throw new Error("Invalid rate response");
       autoRate = { rate, sourceDate: new Date(sourceDate).toISOString().slice(0, 10), checkedOn: todayUtc() };
+      rateUnavailable = false;
       try { localStorage.setItem(rateCacheKey, JSON.stringify(autoRate)); } catch { /* Keep in memory. */ }
     } catch (error) {
+      rateUnavailable = true;
       console.warn("Daily exchange rate unavailable", error);
     } finally {
       rateRefreshing = false;
@@ -973,7 +976,7 @@
     const rate = currentRate();
     const updatedLabel = rate
       ? `1 RUB ≈ ${rate} CNY · 数据日期 ${autoRate.sourceDate}${autoRate.checkedOn === todayUtc() ? "" : " · 离线缓存"}`
-      : "正在获取今日汇率…";
+      : rateUnavailable ? "今日汇率暂不可用，请联网后重开页面" : "正在获取今日汇率…";
     return `<section class="ledger-converter" aria-labelledby="ledger-converter-title">
       <div class="ledger-section-heading"><div><p class="ledger-section-kicker">RUB ⇄ CNY</p><h2 id="ledger-converter-title">卢布换算</h2></div></div>
       <form data-ledger-form="converter" class="ledger-converter-form">
@@ -2003,6 +2006,7 @@
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) void refreshRate();
     });
+    setInterval(() => { if (!document.hidden) void refreshRate(); }, 30 * 60 * 1000);
     ledgerRoot.removeAttribute("aria-busy");
     return deepClone(ledgerData);
   }

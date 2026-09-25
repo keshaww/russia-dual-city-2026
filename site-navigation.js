@@ -14,15 +14,14 @@
     return {
       travelView: document.querySelector('[data-site-view="travel"]'),
       ledgerView: document.querySelector('[data-site-view="ledger"]'),
-      travelMenu: document.querySelector("#travel-navigation"),
-      travelTrigger: document.querySelector("#travel-navigation-trigger"),
+      travelLinks: [...document.querySelectorAll(".travel-navigation-menu a")],
       ledgerLink: document.querySelector("#ledger-navigation-link"),
       skipLink: document.querySelector("#skip-link")
     };
   }
 
   function setVisibleView(nextView, options = {}) {
-    const { travelView, ledgerView, travelTrigger, ledgerLink, skipLink } = elements();
+    const { travelView, ledgerView, travelLinks, ledgerLink, skipLink } = elements();
     if (!travelView || !ledgerView) return;
 
     const viewChanged = activeView !== nextView;
@@ -35,10 +34,10 @@
     travelView.toggleAttribute("inert", ledgerActive);
     ledgerView.toggleAttribute("inert", !ledgerActive);
     document.body.dataset.activeView = nextView;
-    if (travelTrigger) {
-      if (ledgerActive) travelTrigger.removeAttribute("aria-current");
-      else travelTrigger.setAttribute("aria-current", "page");
-    }
+    travelLinks.forEach((link) => {
+      if (!ledgerActive && link.getAttribute("href") === location.hash) link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    });
     if (ledgerLink) {
       if (ledgerActive) ledgerLink.setAttribute("aria-current", "page");
       else ledgerLink.removeAttribute("aria-current");
@@ -94,7 +93,6 @@
   }
 
   function setup() {
-    const { travelMenu } = elements();
     history.scrollRestoration = "manual";
     activeView = viewForHash(location.hash);
     routeFromLocation({ restore: false, forceScroll: true });
@@ -103,7 +101,6 @@
       const ledgerLink = event.target.closest("#ledger-navigation-link");
       if (ledgerLink) {
         event.preventDefault();
-        travelMenu?.removeAttribute("open");
         navigate("#ledger");
         return;
       }
@@ -111,12 +108,9 @@
       const travelLink = event.target.closest(".travel-navigation-menu a, #wordmark");
       if (travelLink) {
         event.preventDefault();
-        travelMenu?.removeAttribute("open");
         navigate(travelLink.getAttribute("href") || "#top");
         return;
       }
-
-      if (travelMenu?.open && !event.target.closest("#travel-navigation")) travelMenu.removeAttribute("open");
     });
 
     window.addEventListener("popstate", () => scheduleBrowserRoute({ restore: true }));
@@ -134,3 +128,4 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setup);
   else setup();
 })();
+

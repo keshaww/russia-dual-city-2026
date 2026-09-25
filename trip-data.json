@@ -1,0 +1,2218 @@
+{
+  "$schema": "./schemas/trip-data.schema.json",
+  "schemaVersion": "2.0-lite",
+  "config": {
+    "schemaVersion": "1.0.0",
+    "modules": {
+      "flights": true,
+      "overview": true,
+      "itinerary": true,
+      "todo": true,
+      "driving": false,
+      "ledger": false
+    },
+    "language": "zh-CN",
+    "persistence": {
+      "mode": "local"
+    }
+  },
+  "metadata": {
+    "tripId": "russia-moscow-petersburg-2026",
+    "title": "俄罗斯双城旅行｜2026年秋",
+    "language": "zh-CN",
+    "assets": {
+      "routeMaps": [
+        "assets/maps/templates/template-04-urban.webp"
+      ]
+    },
+    "timeZone": "Europe/Moscow"
+  },
+  "trip": {
+    "status": "draft",
+    "startDate": "2026-09-30",
+    "endDate": "2026-10-09",
+    "dayCount": 10,
+    "nightCountAway": 9,
+    "countries": [
+      {
+        "code": "RU",
+        "nameZh": "俄罗斯",
+        "nameEn": "RUSSIA"
+      }
+    ],
+    "primaryDestinationCountries": [
+      "RU"
+    ],
+    "citiesAndAreas": [
+      "莫斯科",
+      "圣彼得堡",
+      "皇村",
+      "彼得霍夫"
+    ],
+    "routeSummary": "深圳—北京大兴—莫斯科—圣彼得堡—莫斯科—北京大兴—深圳",
+    "groupSize": null
+  },
+  "flightJourneys": [
+    {
+      "id": "outbound",
+      "title": "去程：深圳—莫斯科"
+    },
+    {
+      "id": "homebound",
+      "title": "返程：莫斯科—深圳"
+    }
+  ],
+  "flights": [
+    {
+      "id": "mu6662",
+      "journeyId": "outbound",
+      "sequence": 1,
+      "airline": {
+        "nameZh": "中国东方航空"
+      },
+      "flightNumber": "MU6662",
+      "departure": {
+        "airportCode": "SZX",
+        "city": "深圳",
+        "date": "2026-09-30",
+        "time": "06:55",
+        "utcOffset": "+08:00",
+        "terminal": "T3"
+      },
+      "arrival": {
+        "airportCode": "PKX",
+        "city": "北京大兴",
+        "date": "2026-09-30",
+        "time": "10:10",
+        "utcOffset": "+08:00"
+      }
+    },
+    {
+      "id": "mu2075",
+      "journeyId": "outbound",
+      "sequence": 2,
+      "airline": {
+        "nameZh": "中国东方航空"
+      },
+      "flightNumber": "MU2075",
+      "departure": {
+        "airportCode": "PKX",
+        "city": "北京大兴",
+        "date": "2026-09-30",
+        "time": "11:55",
+        "utcOffset": "+08:00"
+      },
+      "arrival": {
+        "airportCode": "SVO",
+        "city": "莫斯科",
+        "date": "2026-09-30",
+        "time": "15:25",
+        "utcOffset": "+03:00",
+        "terminal": "C"
+      },
+      "connectionFromPrevious": {
+        "plannedDurationText": "转机1小时45分"
+      }
+    },
+    {
+      "id": "mu2076",
+      "journeyId": "homebound",
+      "sequence": 1,
+      "airline": {
+        "nameZh": "中国东方航空"
+      },
+      "flightNumber": "MU2076",
+      "departure": {
+        "airportCode": "SVO",
+        "city": "莫斯科",
+        "date": "2026-10-08",
+        "time": "17:15",
+        "utcOffset": "+03:00",
+        "terminal": "C"
+      },
+      "arrival": {
+        "airportCode": "PKX",
+        "city": "北京大兴",
+        "date": "2026-10-09",
+        "time": "05:30",
+        "utcOffset": "+08:00"
+      }
+    },
+    {
+      "id": "mu6295",
+      "journeyId": "homebound",
+      "sequence": 2,
+      "airline": {
+        "nameZh": "中国东方航空"
+      },
+      "flightNumber": "MU6295",
+      "departure": {
+        "airportCode": "PKX",
+        "city": "北京大兴",
+        "date": "2026-10-09",
+        "time": "09:00",
+        "utcOffset": "+08:00"
+      },
+      "arrival": {
+        "airportCode": "SZX",
+        "city": "深圳",
+        "date": "2026-10-09",
+        "time": "12:25",
+        "utcOffset": "+08:00",
+        "terminal": "T3"
+      },
+      "connectionFromPrevious": {
+        "plannedDurationText": "转机3小时30分"
+      }
+    }
+  ],
+  "accommodations": [
+    {
+      "id": "moscow-hotel",
+      "city": "莫斯科",
+      "name": "索科尔尼基酒店",
+      "checkIn": "2026-09-30",
+      "checkOut": "2026-10-03",
+      "nights": 3,
+      "address": "Rusakovskaya Ulitsa 24",
+      "status": "已预订"
+    },
+    {
+      "id": "helen-hotel",
+      "city": "圣彼得堡",
+      "name": "Helen Hotel",
+      "checkIn": "2026-10-03",
+      "checkOut": "2026-10-07",
+      "nights": 4,
+      "address": "Bol'shaya Morskaya 28/13",
+      "status": "已预订"
+    }
+  ],
+  "groundTransport": {
+    "rentalCar": null,
+    "rentalChecklist": [],
+    "drivingNotes": [],
+    "drivingReferenceLinks": [],
+    "plannedRoadLegs": [],
+    "publicTransitAndRail": [
+      {
+        "date": "2026-10-03",
+        "service": "760A",
+        "from": "莫斯科列宁格勒站",
+        "to": "圣彼得堡莫斯科站",
+        "time": "09:25—13:28",
+        "status": "已预订"
+      },
+      {
+        "date": "2026-10-07",
+        "service": "003A Express",
+        "from": "圣彼得堡莫斯科站",
+        "to": "莫斯科列宁格勒站",
+        "time": "23:30—次日08:30",
+        "status": "已预订"
+      }
+    ]
+  },
+  "days": [
+    {
+      "id": "day-1",
+      "day": 1,
+      "date": "2026-09-30",
+      "title": "两段航班",
+      "locations": [
+        "深圳",
+        "莫斯科"
+      ],
+      "schedule": [
+        {
+          "id": "schedule-5",
+          "time": "05:00",
+          "type": "attraction",
+          "text": "抵达深圳宝安机场T3｜国际段联程，建议预留充足时间"
+        },
+        {
+          "id": "schedule-6",
+          "time": "06:55—10:10",
+          "type": "flight",
+          "text": "MU6662｜大兴转机仅1小时45分；核实同票联程、行李直挂及转机流程"
+        },
+        {
+          "id": "schedule-7",
+          "time": "11:55—15:25",
+          "type": "flight",
+          "text": "MU2075｜北京转机1小时45分"
+        },
+        {
+          "id": "schedule-8",
+          "time": "18:00后",
+          "type": "check-in",
+          "text": "入住；红场夜景（可选）｜长途飞行后量力而行"
+        }
+      ],
+      "notes": [
+        "当日主线：两段航班；抵达后红场夜景（视体力）",
+        "行程强度：低；状态：已预订"
+      ]
+    },
+    {
+      "id": "day-2",
+      "day": 2,
+      "date": "2026-10-01",
+      "title": "特列季亚科夫画廊",
+      "locations": [
+        "莫斯科"
+      ],
+      "schedule": [
+        {
+          "id": "schedule-9",
+          "time": "10:00—13:00",
+          "type": "attraction",
+          "text": "特列季亚科夫画廊｜重点看《无名女郎》《伊凡雷帝杀子》等",
+          "ticketIds": [
+            "ticket-10"
+          ]
+        },
+        {
+          "id": "schedule-10",
+          "time": "14:30—15:30",
+          "type": "attraction",
+          "text": "救世主大教堂＋牧首桥｜宗教活动期间遵守拍摄规定"
+        },
+        {
+          "id": "schedule-11",
+          "time": "16:15—17:15",
+          "type": "attraction",
+          "text": "老阿尔巴特街｜商业化较强，控制停留时间"
+        },
+        {
+          "id": "schedule-12",
+          "time": "17:30—19:00",
+          "type": "attraction",
+          "text": "麻雀山＋莫斯科大学｜阿尔巴特至麻雀山预留交通；阴雨或疲劳时可取消"
+        }
+      ],
+      "notes": [
+        "当日主线：特列季亚科夫画廊—救世主大教堂—阿尔巴特—麻雀山",
+        "行程强度：中；状态：待预约"
+      ]
+    },
+    {
+      "id": "day-3",
+      "day": 3,
+      "date": "2026-10-02",
+      "title": "克里姆林宫",
+      "locations": [
+        "莫斯科"
+      ],
+      "schedule": [
+        {
+          "id": "schedule-13",
+          "time": "10:00—12:00",
+          "type": "attraction",
+          "text": "克里姆林宫教堂广场｜周四闭馆，已安排周五",
+          "ticketIds": [
+            "ticket-5"
+          ]
+        },
+        {
+          "id": "schedule-14",
+          "time": "12:00—13:30",
+          "type": "attraction",
+          "text": "军械库｜按票面入场时段调整"
+        },
+        {
+          "id": "schedule-15",
+          "time": "14:30—16:30",
+          "type": "attraction",
+          "text": "亚历山大花园＋圣瓦西里｜圣瓦西里单独购票"
+        },
+        {
+          "id": "schedule-16",
+          "time": "16:30—19:00",
+          "type": "attraction",
+          "text": "古姆百货＋扎里亚季耶公园｜悬空桥适合拍夜景"
+        }
+      ],
+      "notes": [
+        "当日主线：克里姆林宫—军械库—红场—圣瓦西里—扎里亚季耶",
+        "行程强度：高；状态：待预约"
+      ]
+    },
+    {
+      "id": "day-4",
+      "day": 4,
+      "date": "2026-10-03",
+      "title": "白天列车",
+      "locations": [
+        "莫斯科",
+        "圣彼得堡"
+      ],
+      "schedule": [
+        {
+          "id": "schedule-17",
+          "time": "08:10",
+          "type": "check-out",
+          "text": "退房后前往列宁格勒火车站｜08:30左右抵达安检"
+        },
+        {
+          "id": "schedule-18",
+          "time": "09:25—13:28",
+          "type": "transfer",
+          "text": "760A列车前往圣彼得堡｜携带订票护照"
+        },
+        {
+          "id": "schedule-19",
+          "time": "14:30",
+          "type": "check-in",
+          "text": "入住Helen Hotel｜两笔订单应已衔接"
+        },
+        {
+          "id": "schedule-20",
+          "time": "15:30—18:15",
+          "type": "attraction",
+          "text": "圣以撒＋柱廊＋青铜骑士｜教堂及柱廊按末次入场时间参观；青铜骑士可留到教堂闭馆后外观",
+          "ticketIds": [
+            "ticket-11"
+          ]
+        },
+        {
+          "id": "schedule-21",
+          "time": "18:30—20:00",
+          "type": "walk",
+          "text": "新荷兰岛＋晚餐｜晚间放松"
+        }
+      ],
+      "notes": [
+        "当日主线：白天列车；圣以撒—青铜骑士—新荷兰岛",
+        "行程强度：中；状态：已预订"
+      ]
+    },
+    {
+      "id": "day-5",
+      "day": 5,
+      "date": "2026-10-04",
+      "title": "滴血救世主",
+      "locations": [
+        "圣彼得堡"
+      ],
+      "schedule": [
+        {
+          "id": "schedule-22",
+          "time": "10:00—11:00",
+          "type": "attraction",
+          "text": "滴血救世主教堂｜周三闭馆",
+          "ticketIds": [
+            "ticket-12"
+          ]
+        },
+        {
+          "id": "schedule-23",
+          "time": "11:30—16:30",
+          "type": "attraction",
+          "text": "冬宫/艾尔米塔什｜周一闭馆；提前选必看展厅",
+          "ticketIds": [
+            "ticket-6"
+          ]
+        },
+        {
+          "id": "schedule-24",
+          "time": "17:00—晚间",
+          "type": "attraction",
+          "text": "宫殿广场＋喀山＋涅瓦大街｜喀山与涅瓦大街按体力取舍；叶利谢耶夫食品商店可顺路"
+        }
+      ],
+      "notes": [
+        "当日主线：滴血救世主—冬宫—宫殿广场—喀山—涅瓦大街",
+        "行程强度：高；状态：待预约"
+      ]
+    },
+    {
+      "id": "day-6",
+      "day": 6,
+      "date": "2026-10-05",
+      "title": "皇村：叶卡捷琳娜宫",
+      "locations": [
+        "圣彼得堡"
+      ],
+      "schedule": [
+        {
+          "id": "schedule-25",
+          "time": "08:30—17:00",
+          "type": "attraction",
+          "text": "皇村：叶卡捷琳娜宫＋琥珀厅＋花园｜按叶卡捷琳娜宫票面时段入场；晚间留作休息",
+          "ticketIds": [
+            "ticket-7"
+          ]
+        }
+      ],
+      "notes": [
+        "当日主线：皇村：叶卡捷琳娜宫—琥珀厅—花园；晚间休息",
+        "行程强度：中；状态：待预约"
+      ]
+    },
+    {
+      "id": "day-7",
+      "day": 7,
+      "date": "2026-10-06",
+      "title": "彼得霍夫：下花园",
+      "locations": [
+        "圣彼得堡"
+      ],
+      "schedule": [
+        {
+          "id": "schedule-26",
+          "time": "08:00—15:30",
+          "type": "attraction",
+          "text": "彼得霍夫：下花园＋喷泉＋大宫殿｜按大宫殿票面时段参观；15:30离园返城，喷泉运行待核",
+          "ticketIds": [
+            "ticket-8"
+          ]
+        },
+        {
+          "id": "schedule-27",
+          "time": "晚间（按票面）",
+          "type": "attraction",
+          "text": "马林斯基剧院演出｜返城后在剧院附近晚餐；至少提前30分钟到场，若早场则提前离园",
+          "ticketIds": [
+            "ticket-9"
+          ]
+        }
+      ],
+      "notes": [
+        "当日主线：彼得霍夫：下花园—喷泉—大宫殿；晚间马林斯基剧院",
+        "行程强度：高；状态：待确认"
+      ]
+    },
+    {
+      "id": "day-8",
+      "day": 8,
+      "date": "2026-10-07",
+      "title": "退房寄存",
+      "locations": [
+        "圣彼得堡",
+        "莫斯科"
+      ],
+      "schedule": [
+        {
+          "id": "schedule-28",
+          "time": "09:30",
+          "type": "check-out",
+          "text": "退房并免费寄存行李｜酒店官网：退房后免费寄存≤24小时"
+        },
+        {
+          "id": "schedule-29",
+          "time": "10:00—12:00",
+          "type": "attraction",
+          "text": "法贝热博物馆｜每日开放",
+          "ticketIds": [
+            "ticket-13"
+          ]
+        },
+        {
+          "id": "schedule-30",
+          "time": "13:30—16:30",
+          "type": "attraction",
+          "text": "俄罗斯博物馆｜周三正常开放",
+          "ticketIds": [
+            "ticket-14"
+          ]
+        },
+        {
+          "id": "schedule-31",
+          "time": "16:30—20:30",
+          "type": "walk",
+          "text": "花园散步＋晚餐＋最后购物｜控制体力，为夜卧留余量"
+        },
+        {
+          "id": "schedule-32",
+          "time": "20:45—22:15",
+          "type": "attraction",
+          "text": "取行李并前往莫斯科火车站｜20:45取行李；22:15前抵站安检，交通拥堵时提前出发"
+        },
+        {
+          "id": "schedule-33",
+          "time": "23:30—次日08:30",
+          "type": "transfer",
+          "text": "003A“Express”夜卧列车｜随身小包放洗漱及充电用品"
+        }
+      ],
+      "notes": [
+        "当日主线：退房寄存—法贝热—俄罗斯博物馆—夜卧列车",
+        "行程强度：中；状态：已预订"
+      ]
+    },
+    {
+      "id": "day-9",
+      "day": 9,
+      "date": "2026-10-08",
+      "title": "08:30抵达",
+      "locations": [
+        "莫斯科",
+        "北京"
+      ],
+      "schedule": [
+        {
+          "id": "schedule-34",
+          "time": "08:30—09:45",
+          "type": "attraction",
+          "text": "抵达列宁格勒站；早餐｜不再安排景点"
+        },
+        {
+          "id": "schedule-35",
+          "time": "10:00—11:46",
+          "type": "attraction",
+          "text": "前往谢列梅捷沃机场C｜预留列车晚点与机场值机缓冲；机场快线时刻出发前核对"
+        },
+        {
+          "id": "schedule-36",
+          "time": "17:15—次日05:30",
+          "type": "flight",
+          "text": "MU2076｜国际航班提前办理值机"
+        }
+      ],
+      "notes": [
+        "当日主线：08:30抵达；早餐后直奔谢列梅捷沃机场",
+        "行程强度：低；状态：已预订"
+      ]
+    },
+    {
+      "id": "day-10",
+      "day": 10,
+      "date": "2026-10-09",
+      "title": "北京大兴转机，12:25抵达深圳",
+      "locations": [
+        "北京",
+        "深圳"
+      ],
+      "schedule": [
+        {
+          "id": "schedule-37",
+          "time": "09:00—12:25",
+          "type": "flight",
+          "text": "MU6295｜05:30抵达后转国内段"
+        }
+      ],
+      "notes": [
+        "当日主线：北京大兴转机，12:25抵达深圳",
+        "行程强度：低；状态：已预订"
+      ]
+    }
+  ],
+  "places": [
+    {
+      "id": "svo",
+      "nameZh": "谢列梅捷沃机场",
+      "name": "谢列梅捷沃机场",
+      "geo": {
+        "lat": 55.9726,
+        "lng": 37.4146
+      },
+      "countryCode": "RU",
+      "query": "谢列梅捷沃机场 Russia"
+    },
+    {
+      "id": "moscow",
+      "nameZh": "莫斯科市中心",
+      "name": "莫斯科市中心",
+      "geo": {
+        "lat": 55.7512,
+        "lng": 37.6184
+      },
+      "countryCode": "RU",
+      "query": "莫斯科市中心 Russia"
+    },
+    {
+      "id": "tretyakov",
+      "nameZh": "特列季亚科夫画廊",
+      "name": "特列季亚科夫画廊",
+      "geo": {
+        "lat": 55.7414,
+        "lng": 37.6208
+      },
+      "countryCode": "RU",
+      "query": "特列季亚科夫画廊 Russia"
+    },
+    {
+      "id": "sparrow",
+      "nameZh": "麻雀山",
+      "name": "麻雀山",
+      "geo": {
+        "lat": 55.709,
+        "lng": 37.5449
+      },
+      "countryCode": "RU",
+      "query": "麻雀山 Russia"
+    },
+    {
+      "id": "kremlin",
+      "nameZh": "克里姆林宫",
+      "name": "克里姆林宫",
+      "geo": {
+        "lat": 55.752,
+        "lng": 37.6175
+      },
+      "countryCode": "RU",
+      "query": "克里姆林宫 Russia"
+    },
+    {
+      "id": "stbasil",
+      "nameZh": "圣瓦西里大教堂",
+      "name": "圣瓦西里大教堂",
+      "geo": {
+        "lat": 55.7525,
+        "lng": 37.6231
+      },
+      "countryCode": "RU",
+      "query": "圣瓦西里大教堂 Russia"
+    },
+    {
+      "id": "petersburg",
+      "nameZh": "圣彼得堡市中心",
+      "name": "圣彼得堡市中心",
+      "geo": {
+        "lat": 59.9343,
+        "lng": 30.3351
+      },
+      "countryCode": "RU",
+      "query": "圣彼得堡市中心 Russia"
+    },
+    {
+      "id": "isaac",
+      "nameZh": "圣以撒大教堂",
+      "name": "圣以撒大教堂",
+      "geo": {
+        "lat": 59.9343,
+        "lng": 30.3061
+      },
+      "countryCode": "RU",
+      "query": "圣以撒大教堂 Russia"
+    },
+    {
+      "id": "savior",
+      "nameZh": "滴血救世主教堂",
+      "name": "滴血救世主教堂",
+      "geo": {
+        "lat": 59.9402,
+        "lng": 30.3286
+      },
+      "countryCode": "RU",
+      "query": "滴血救世主教堂 Russia"
+    },
+    {
+      "id": "hermitage",
+      "nameZh": "冬宫",
+      "name": "冬宫",
+      "geo": {
+        "lat": 59.9398,
+        "lng": 30.3146
+      },
+      "countryCode": "RU",
+      "query": "冬宫 Russia"
+    },
+    {
+      "id": "pushkin",
+      "nameZh": "皇村",
+      "name": "皇村",
+      "geo": {
+        "lat": 59.7166,
+        "lng": 30.3958
+      },
+      "countryCode": "RU",
+      "query": "皇村 Russia"
+    },
+    {
+      "id": "peterhof",
+      "nameZh": "彼得霍夫",
+      "name": "彼得霍夫",
+      "geo": {
+        "lat": 59.8845,
+        "lng": 29.9083
+      },
+      "countryCode": "RU",
+      "query": "彼得霍夫 Russia"
+    },
+    {
+      "id": "mariinsky",
+      "nameZh": "马林斯基剧院",
+      "name": "马林斯基剧院",
+      "geo": {
+        "lat": 59.9259,
+        "lng": 30.296
+      },
+      "countryCode": "RU",
+      "query": "马林斯基剧院 Russia"
+    },
+    {
+      "id": "faberge",
+      "nameZh": "法贝热博物馆",
+      "name": "法贝热博物馆",
+      "geo": {
+        "lat": 59.935,
+        "lng": 30.3454
+      },
+      "countryCode": "RU",
+      "query": "法贝热博物馆 Russia"
+    },
+    {
+      "id": "russian-museum",
+      "nameZh": "俄罗斯博物馆",
+      "name": "俄罗斯博物馆",
+      "geo": {
+        "lat": 59.9388,
+        "lng": 30.332
+      },
+      "countryCode": "RU",
+      "query": "俄罗斯博物馆 Russia"
+    }
+  ],
+  "hubTransfers": [
+    {
+      "day": 1,
+      "title": "谢列梅捷沃机场 C 航站楼 → 索科尔尼基酒店",
+      "recommended": "入境、取行李后按机场标识到官方出租车上车点，用 Yandex Go 输入 Rusakovskaya Ulitsa 24；落地当天带行李，直达酒店最省换乘。以 App 实时报价和车牌为准。",
+      "alternative": "公共交通：按机场指示乘 Aeroexpress 至白俄罗斯站，再由 Belorusskaya 站乘地铁 5 号环线到 Komsomolskaya，换 1 号线到 Sokolniki，步行至酒店。购票前核对机场出发站和末班车。",
+      "links": [
+        { "label": "机场快线官网", "url": "https://aeroexpress.ru/en/" },
+        { "label": "莫斯科交通官网", "url": "https://transport.mos.ru/en/" },
+        { "label": "查看酒店位置", "url": "https://www.openstreetmap.org/search?query=Rusakovskaya%20Ulitsa%2024%20Moscow" }
+      ]
+    },
+    {
+      "day": 4,
+      "title": "莫斯科酒店 → 列宁格勒站",
+      "recommended": "从 Sokolniki 地铁站乘 1 号线至 Komsomolskaya，按“Ленинградский вокзал”指示出站。带大件行李或下雨可改用打车；以 08:30 抵站安检为目标。",
+      "alternative": "核对列车票面车站和站台，别与圣彼得堡的莫斯科站混淆。",
+      "links": [
+        { "label": "俄铁官网", "url": "https://www.rzd.ru/" },
+        { "label": "莫斯科交通官网", "url": "https://transport.mos.ru/en/" }
+      ]
+    },
+    {
+      "day": 4,
+      "title": "圣彼得堡莫斯科站 → Helen Hotel",
+      "recommended": "13:28 抵站后，从车站正规出口叫车至 Bol'shaya Morskaya 28/13；带行李建议直达，酒店确认入住后再去圣以撒大教堂。",
+      "alternative": "若不打车，可用当地地图查询当日公交或地铁组合；车站至酒店步行距离较长，带行李不推荐步行。",
+      "links": [
+        { "label": "查看酒店位置", "url": "https://www.openstreetmap.org/search?query=Bolshaya%20Morskaya%2028%2F13%20Saint%20Petersburg" },
+        { "label": "圣彼得堡交通官网", "url": "https://orgp.spb.ru/" }
+      ]
+    },
+    {
+      "day": 7,
+      "title": "彼得霍夫 → 市区 → 马林斯基剧院",
+      "recommended": "从彼得霍夫回到市区后先按演出票面场馆地址前往剧院；返程方式与离园时间要以演出开场时间倒推。",
+      "alternative": "不要预设水翼船在 10 月仍运营。优先在博物馆交通页核对陆路方案和当天班次。",
+      "links": [
+        { "label": "彼得霍夫官网", "url": "https://en.peterhofmuseum.ru/" },
+        { "label": "马林斯基演出官网", "url": "https://www.mariinsky.ru/en/" }
+      ]
+    },
+    {
+      "day": 8,
+      "title": "Helen Hotel → 圣彼得堡莫斯科站",
+      "recommended": "20:45 在酒店取行李后，直接叫车到 Московский вокзал（莫斯科站），22:15 前抵站安检；夜卧列车 23:30 发车。",
+      "alternative": "若道路拥堵，用当地地图核对地铁方案并预留带行李的进站时间。",
+      "links": [
+        { "label": "俄铁官网", "url": "https://www.rzd.ru/" },
+        { "label": "圣彼得堡交通官网", "url": "https://orgp.spb.ru/" }
+      ]
+    },
+    {
+      "day": 9,
+      "title": "莫斯科列宁格勒站 → 谢列梅捷沃机场 C 航站楼",
+      "recommended": "抵达后从 Komsomolskaya 乘地铁 5 号环线至 Belorusskaya，在白俄罗斯站换 Aeroexpress 前往机场；下车后按航站楼指示前往 C 航站楼。以官方实时班次和航站楼信息为准。",
+      "alternative": "携带大件行李也可直接打车到 SVO C，但早高峰道路时间不稳定；17:15 国际航班请留足值机和边检时间。",
+      "links": [
+        { "label": "机场快线官网", "url": "https://aeroexpress.ru/en/" },
+        { "label": "莫斯科交通官网", "url": "https://transport.mos.ru/en/" }
+      ]
+    }
+  ],
+  "restaurants": [],
+  "bookingsAndTickets": [],
+  "ticketPlanning": {
+    "statusStorage": "local",
+    "statusStorageNote": "门票状态默认只保存在当前浏览器。",
+    "items": [
+      {
+        "id": "ticket-5",
+        "day": 3,
+        "name": "克里姆林宫＋军械库",
+        "requirement": "advance-required",
+        "guidance": [
+          "优先锁定军械库入场时段",
+          "克里姆林宫周四闭馆",
+          "当天其他项目围绕票面时间调整"
+        ],
+        "officialUrl": "https://www.kreml.ru/"
+      },
+      {
+        "id": "ticket-6",
+        "day": 5,
+        "name": "冬宫/艾尔米塔什",
+        "requirement": "advance-required",
+        "guidance": [
+          "购买分时门票",
+          "周一闭馆",
+          "建议11:30左右入场"
+        ],
+        "officialUrl": "https://www.hermitagemuseum.org/"
+      },
+      {
+        "id": "ticket-7",
+        "day": 6,
+        "name": "叶卡捷琳娜宫＋琥珀厅",
+        "requirement": "advance-required",
+        "guidance": [
+          "锁定叶卡捷琳娜宫与琥珀厅参观时段",
+          "秋季通常周二闭馆",
+          "往返交通同时规划"
+        ],
+        "officialUrl": "https://tzar.ru/en"
+      },
+      {
+        "id": "ticket-8",
+        "day": 7,
+        "name": "彼得霍夫大宫殿",
+        "requirement": "needs-confirmation",
+        "guidance": [
+          "购票并核对大宫殿时段、喷泉；15:30前离园",
+          "10月为喷泉季末",
+          "当日衔接剧院；天气差时启动市内备选"
+        ],
+        "officialUrl": "https://en.peterhofmuseum.ru/"
+      },
+      {
+        "id": "ticket-9",
+        "day": 7,
+        "name": "马林斯基剧院",
+        "requirement": "needs-confirmation",
+        "guidance": [
+          "核对演出开场时间、票面场馆和地址",
+          "按演出日历",
+          "彼得霍夫返城后入场；若较早开演须提前离园"
+        ],
+        "officialUrl": "https://www.mariinsky.ru/en/"
+      },
+      {
+        "id": "ticket-10",
+        "day": 2,
+        "name": "特列季亚科夫画廊",
+        "requirement": "advance-recommended",
+        "guidance": [
+          "购买历史馆门票",
+          "周四开放至晚间",
+          "不爱美术可缩短至2小时"
+        ],
+        "officialUrl": "https://www.tretyakovgallery.ru/"
+      },
+      {
+        "id": "ticket-11",
+        "day": 4,
+        "name": "圣以撒大教堂",
+        "requirement": "needs-confirmation",
+        "guidance": [
+          "确认柱廊开放",
+          "周三闭馆",
+          "天气差可不登柱廊"
+        ],
+        "officialUrl": "https://cathedral.ru/en"
+      },
+      {
+        "id": "ticket-12",
+        "day": 5,
+        "name": "滴血救世主教堂",
+        "requirement": "advance-recommended",
+        "guidance": [
+          "可提前购票",
+          "周三闭馆",
+          "安排在冬宫之前"
+        ],
+        "officialUrl": "https://cathedral.ru/en"
+      },
+      {
+        "id": "ticket-13",
+        "day": 8,
+        "name": "法贝热博物馆",
+        "requirement": "advance-recommended",
+        "guidance": [
+          "购买上午时段",
+          "每日开放",
+          "距离涅瓦大街较近"
+        ],
+        "officialUrl": "https://fabergemuseum.ru/en/"
+      },
+      {
+        "id": "ticket-14",
+        "day": 8,
+        "name": "俄罗斯博物馆",
+        "requirement": "advance-recommended",
+        "guidance": [
+          "可现场或提前购票",
+          "周二闭馆；周三开放",
+          "参观2.5—3小时"
+        ],
+        "officialUrl": "https://rusmuseum.ru/"
+      }
+    ]
+  },
+  "preTrip": {
+    "packingItems": [
+      {
+        "id": "todo-19",
+        "text": "确认东航行李直挂｜大兴仅1小时45分；确认同票联程、直挂、转机流程与误机保障（出发前）",
+        "completed": false
+      },
+      {
+        "id": "todo-20",
+        "text": "准备适量卢布现金｜Visa/Mastercard在俄使用受限（出发前）",
+        "completed": false
+      },
+      {
+        "id": "todo-21",
+        "text": "下载Yandex Maps离线地图｜部分区域可能出现定位干扰（出发前）",
+        "completed": false
+      },
+      {
+        "id": "todo-22",
+        "text": "保存酒店俄文地址｜便于叫车和问路（出发前）",
+        "completed": false
+      },
+      {
+        "id": "todo-23",
+        "text": "保存火车票离线PDF｜电子注册已完成，携带护照（出发前）",
+        "completed": false
+      },
+      {
+        "id": "todo-24",
+        "text": "复核彼得霍夫喷泉｜若停运则换市内宫殿路线（9月下旬）",
+        "completed": false
+      },
+      {
+        "id": "todo-25",
+        "text": "Helen Hotel行李寄存｜退房后免费寄存不超过24小时（10月7日）",
+        "completed": true
+      },
+      {
+        "id": "todo-26",
+        "text": "003A夜卧随身小包｜牙刷、充电器、拖鞋、眼罩、次日衣物（10月7日）",
+        "completed": false
+      },
+      {
+        "id": "todo-27",
+        "text": "检查天气与保暖衣物｜10月早晚寒冷且可能有雨（出发前3天）",
+        "completed": false
+      }
+    ],
+    "preparationsExplicitlyMentioned": [
+      "确认东航行李直挂｜大兴仅1小时45分；确认同票联程、直挂、转机流程与误机保障（出发前）",
+      "准备适量卢布现金｜Visa/Mastercard在俄使用受限（出发前）",
+      "下载Yandex Maps离线地图｜部分区域可能出现定位干扰（出发前）",
+      "保存酒店俄文地址｜便于叫车和问路（出发前）",
+      "保存火车票离线PDF｜电子注册已完成，携带护照（出发前）",
+      "复核彼得霍夫喷泉｜若停运则换市内宫殿路线（9月下旬）",
+      "Helen Hotel行李寄存｜退房后免费寄存不超过24小时（10月7日）",
+      "003A夜卧随身小包｜牙刷、充电器、拖鞋、眼罩、次日衣物（10月7日）",
+      "检查天气与保暖衣物｜10月早晚寒冷且可能有雨（出发前3天）"
+    ],
+    "missingNote": ""
+  },
+  "mapLinks": {
+    "providedGoogleMapsLinks": [],
+    "note": "景点定位请结合俄文地址和当地地图核对。",
+    "cityLevelNavigationDisabled": false,
+    "navigationPolicy": {
+      "noNavigationTypes": [
+        "flight",
+        "note",
+        "rest"
+      ],
+      "selfNavigationTypes": [
+        "drive",
+        "return",
+        "transfer",
+        "check-in",
+        "check-out",
+        "restaurant",
+        "attraction",
+        "walk",
+        "hike"
+      ]
+    },
+    "navigationPlaces": []
+  },
+  "issuesAndUncertainties": [
+    "10月6日马林斯基剧院演出开场时间及场馆，以票面为准。",
+    "10月6日彼得霍夫喷泉运行及大宫殿预约时段，出发前按官网复核。",
+    "9月30日北京大兴转机只有1小时45分，需确认同票联程、行李直挂与误机保障。"
+  ],
+  "map": {
+    "schemaVersion": "1.0-lite",
+    "mapMode": "template-auto",
+    "templateId": "auto",
+    "disclaimer": "本图仅表达地点的相对方位与路线顺序，不代表真实比例或精确地理边界。",
+    "places": [
+      {
+        "id": "svo",
+        "nameZh": "谢列梅捷沃机场",
+        "name": "谢列梅捷沃机场",
+        "geo": {
+          "lat": 55.9726,
+          "lng": 37.4146
+        },
+        "countryCode": "RU",
+        "query": "谢列梅捷沃机场 Russia"
+      },
+      {
+        "id": "moscow",
+        "nameZh": "莫斯科市中心",
+        "name": "莫斯科市中心",
+        "geo": {
+          "lat": 55.7512,
+          "lng": 37.6184
+        },
+        "countryCode": "RU",
+        "query": "莫斯科市中心 Russia"
+      },
+      {
+        "id": "tretyakov",
+        "nameZh": "特列季亚科夫画廊",
+        "name": "特列季亚科夫画廊",
+        "geo": {
+          "lat": 55.7414,
+          "lng": 37.6208
+        },
+        "countryCode": "RU",
+        "query": "特列季亚科夫画廊 Russia"
+      },
+      {
+        "id": "sparrow",
+        "nameZh": "麻雀山",
+        "name": "麻雀山",
+        "geo": {
+          "lat": 55.709,
+          "lng": 37.5449
+        },
+        "countryCode": "RU",
+        "query": "麻雀山 Russia"
+      },
+      {
+        "id": "kremlin",
+        "nameZh": "克里姆林宫",
+        "name": "克里姆林宫",
+        "geo": {
+          "lat": 55.752,
+          "lng": 37.6175
+        },
+        "countryCode": "RU",
+        "query": "克里姆林宫 Russia"
+      },
+      {
+        "id": "stbasil",
+        "nameZh": "圣瓦西里大教堂",
+        "name": "圣瓦西里大教堂",
+        "geo": {
+          "lat": 55.7525,
+          "lng": 37.6231
+        },
+        "countryCode": "RU",
+        "query": "圣瓦西里大教堂 Russia"
+      },
+      {
+        "id": "petersburg",
+        "nameZh": "圣彼得堡市中心",
+        "name": "圣彼得堡市中心",
+        "geo": {
+          "lat": 59.9343,
+          "lng": 30.3351
+        },
+        "countryCode": "RU",
+        "query": "圣彼得堡市中心 Russia"
+      },
+      {
+        "id": "isaac",
+        "nameZh": "圣以撒大教堂",
+        "name": "圣以撒大教堂",
+        "geo": {
+          "lat": 59.9343,
+          "lng": 30.3061
+        },
+        "countryCode": "RU",
+        "query": "圣以撒大教堂 Russia"
+      },
+      {
+        "id": "savior",
+        "nameZh": "滴血救世主教堂",
+        "name": "滴血救世主教堂",
+        "geo": {
+          "lat": 59.9402,
+          "lng": 30.3286
+        },
+        "countryCode": "RU",
+        "query": "滴血救世主教堂 Russia"
+      },
+      {
+        "id": "hermitage",
+        "nameZh": "冬宫",
+        "name": "冬宫",
+        "geo": {
+          "lat": 59.9398,
+          "lng": 30.3146
+        },
+        "countryCode": "RU",
+        "query": "冬宫 Russia"
+      },
+      {
+        "id": "pushkin",
+        "nameZh": "皇村",
+        "name": "皇村",
+        "geo": {
+          "lat": 59.7166,
+          "lng": 30.3958
+        },
+        "countryCode": "RU",
+        "query": "皇村 Russia"
+      },
+      {
+        "id": "peterhof",
+        "nameZh": "彼得霍夫",
+        "name": "彼得霍夫",
+        "geo": {
+          "lat": 59.8845,
+          "lng": 29.9083
+        },
+        "countryCode": "RU",
+        "query": "彼得霍夫 Russia"
+      },
+      {
+        "id": "mariinsky",
+        "nameZh": "马林斯基剧院",
+        "name": "马林斯基剧院",
+        "geo": {
+          "lat": 59.9259,
+          "lng": 30.296
+        },
+        "countryCode": "RU",
+        "query": "马林斯基剧院 Russia"
+      },
+      {
+        "id": "faberge",
+        "nameZh": "法贝热博物馆",
+        "name": "法贝热博物馆",
+        "geo": {
+          "lat": 59.935,
+          "lng": 30.3454
+        },
+        "countryCode": "RU",
+        "query": "法贝热博物馆 Russia"
+      },
+      {
+        "id": "russian-museum",
+        "nameZh": "俄罗斯博物馆",
+        "name": "俄罗斯博物馆",
+        "geo": {
+          "lat": 59.9388,
+          "lng": 30.332
+        },
+        "countryCode": "RU",
+        "query": "俄罗斯博物馆 Russia"
+      }
+    ],
+    "routes": [
+      {
+        "day": 1,
+        "placeIds": [
+          "svo",
+          "moscow"
+        ]
+      },
+      {
+        "day": 2,
+        "placeIds": [
+          "moscow",
+          "tretyakov",
+          "sparrow"
+        ]
+      },
+      {
+        "day": 3,
+        "placeIds": [
+          "moscow",
+          "kremlin",
+          "stbasil"
+        ]
+      },
+      {
+        "day": 4,
+        "placeIds": [
+          "moscow",
+          "petersburg",
+          "isaac"
+        ]
+      },
+      {
+        "day": 5,
+        "placeIds": [
+          "petersburg",
+          "savior",
+          "hermitage"
+        ]
+      },
+      {
+        "day": 6,
+        "placeIds": [
+          "petersburg",
+          "pushkin",
+          "petersburg"
+        ]
+      },
+      {
+        "day": 7,
+        "placeIds": [
+          "petersburg",
+          "peterhof",
+          "mariinsky"
+        ]
+      },
+      {
+        "day": 8,
+        "placeIds": [
+          "petersburg",
+          "faberge",
+          "russian-museum"
+        ]
+      },
+      {
+        "day": 9,
+        "placeIds": [
+          "petersburg",
+          "moscow",
+          "svo"
+        ]
+      }
+    ],
+    "dailyRoutes": [
+      {
+        "day": 1,
+        "placeIds": [
+          "svo",
+          "moscow"
+        ]
+      },
+      {
+        "day": 2,
+        "placeIds": [
+          "moscow",
+          "tretyakov",
+          "sparrow"
+        ]
+      },
+      {
+        "day": 3,
+        "placeIds": [
+          "moscow",
+          "kremlin",
+          "stbasil"
+        ]
+      },
+      {
+        "day": 4,
+        "placeIds": [
+          "moscow",
+          "petersburg",
+          "isaac"
+        ]
+      },
+      {
+        "day": 5,
+        "placeIds": [
+          "petersburg",
+          "savior",
+          "hermitage"
+        ]
+      },
+      {
+        "day": 6,
+        "placeIds": [
+          "petersburg",
+          "pushkin",
+          "petersburg"
+        ]
+      },
+      {
+        "day": 7,
+        "placeIds": [
+          "petersburg",
+          "peterhof",
+          "mariinsky"
+        ]
+      },
+      {
+        "day": 8,
+        "placeIds": [
+          "petersburg",
+          "faberge",
+          "russian-museum"
+        ]
+      },
+      {
+        "day": 9,
+        "placeIds": [
+          "petersburg",
+          "moscow",
+          "svo"
+        ]
+      }
+    ],
+    "region": {
+      "id": "russia",
+      "label": "俄罗斯",
+      "countryCode": "RU",
+      "title": "莫斯科 · 圣彼得堡",
+      "description": "两城及近郊路线示意"
+    }
+  },
+  "routeMap": {
+    "defaultRegionId": "russia",
+    "regions": [
+      {
+        "id": "russia",
+        "label": "俄罗斯",
+        "countryCode": "RU",
+        "scope": "template-schematic",
+        "mapMode": "frozen-template",
+        "templateId": "urban-radial",
+        "mapModeReason": "dense-place-cluster",
+        "mapModeMetrics": {
+          "placeCount": 15,
+          "geoPlaceCount": 15,
+          "widthKm": 450.55,
+          "heightKm": 469.66,
+          "spanKm": 648.01,
+          "averageNearestKm": 5.7,
+          "components": 1,
+          "largestLegKm": 633.46,
+          "jumpRatio": 106.21
+        },
+        "days": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "canvas": {
+          "width": 1448,
+          "height": 1086
+        },
+        "projection": {
+          "type": "relative-schematic",
+          "bounds": null
+        },
+        "baseImage": "assets/maps/templates/template-04-urban.webp",
+        "title": "莫斯科 · 圣彼得堡",
+        "ariaLabel": "俄罗斯模板化旅行路线示意图，共9天",
+        "description": "两城及近郊路线示意",
+        "disclaimer": "本图仅表达地点的相对方位与路线顺序，不代表真实比例或精确地理边界。",
+        "heading": {
+          "text": "俄罗斯",
+          "x": 33,
+          "y": 105,
+          "size": 40
+        },
+        "legend": {
+          "x": 35,
+          "y": 168,
+          "gap": 43
+        },
+        "annotations": [],
+        "routes": [
+          {
+            "day": 1,
+            "color": "#397dc1",
+            "placeIds": [
+              "svo",
+              "moscow"
+            ],
+            "paths": [
+              "M1078.17 768.34 C1129.6 796.7 1169.2 836.7 1194.8 886"
+            ],
+            "overviewPaths": [
+              "M1078.17 768.34 C1129.6 796.7 1169.2 836.7 1194.8 886"
+            ]
+          },
+          {
+            "day": 2,
+            "color": "#e77e22",
+            "placeIds": [
+              "moscow",
+              "tretyakov",
+              "sparrow"
+            ],
+            "paths": [
+              "M1194.8 886 C1199.1 834.1 1189.0 785.2 1165.06 742.1 C1152.9 798.8 1126.4 847.8 1087.06 886"
+            ],
+            "overviewPaths": [
+              "M1194.8 886 C1158.2 875.2 1121.5 875.2 1087.06 886"
+            ]
+          },
+          {
+            "day": 3,
+            "color": "#618344",
+            "placeIds": [
+              "moscow",
+              "kremlin",
+              "stbasil"
+            ],
+            "paths": [
+              "M1194.8 886 C1198.1 855.7 1209.3 828.8 1227.83 806.68 C1197.3 803.4 1168.3 808.7 1142.52 822.2"
+            ],
+            "overviewPaths": [
+              "M1194.8 886 C1170.6 869.5 1152.9 847.8 1142.52 822.2"
+            ]
+          },
+          {
+            "day": 4,
+            "color": "#209aaa",
+            "placeIds": [
+              "moscow",
+              "petersburg",
+              "isaac"
+            ],
+            "paths": [
+              "M1194.8 886 C1045.8 650.2 873.4 433.0 687.55 247.2 C605.7 274.0 523.2 276.5 444.77 254.6"
+            ],
+            "overviewPaths": [
+              "M1194.8 886 C1045.8 650.2 873.4 433.0 687.55 247.2 C605.7 274.0 523.2 276.5 444.77 254.6"
+            ]
+          },
+          {
+            "day": 5,
+            "color": "#8865a5",
+            "placeIds": [
+              "petersburg",
+              "savior",
+              "hermitage"
+            ],
+            "paths": [
+              "M687.55 247.2 C666.7 224.5 653.6 197.9 649.09 169 C589.7 151.5 530.2 151.5 474.28 169"
+            ],
+            "overviewPaths": [
+              "M687.55 247.2 C607.2 241.9 534.7 215.4 474.28 169"
+            ]
+          },
+          {
+            "day": 6,
+            "color": "#df6185",
+            "placeIds": [
+              "petersburg",
+              "pushkin",
+              "petersburg"
+            ],
+            "paths": [
+              "M687.55 247.2 C656.1 267.4 632.7 294.6 618.59 327 C634.1 293.0 657.5 265.8 687.55 247.2"
+            ],
+            "overviewPaths": []
+          },
+          {
+            "day": 7,
+            "color": "#397dc1",
+            "placeIds": [
+              "petersburg",
+              "peterhof",
+              "mariinsky"
+            ],
+            "paths": [
+              "M687.55 247.2 C660.3 254.6 633.2 254.1 607.83 245.63 C576.3 260.7 551.4 283.0 534.56 311.42"
+            ],
+            "overviewPaths": [
+              "M687.55 247.2 C642.0 284.3 589.9 306.2 534.56 311.42"
+            ]
+          },
+          {
+            "day": 8,
+            "color": "#e77e22",
+            "placeIds": [
+              "petersburg",
+              "faberge",
+              "russian-museum"
+            ],
+            "paths": [
+              "M687.55 247.2 C654.3 208.5 613.3 182.0 566.82 169 C556.6 195.3 540.0 216.8 518.13 232.08"
+            ],
+            "overviewPaths": [
+              "M687.55 247.2 C654.3 208.5 613.3 182.0 566.82 169 C556.6 195.3 540.0 216.8 518.13 232.08"
+            ]
+          },
+          {
+            "day": 9,
+            "color": "#618344",
+            "placeIds": [
+              "petersburg",
+              "moscow",
+              "svo"
+            ],
+            "paths": [
+              "M687.55 247.2 C883.5 445.7 1056.0 662.9 1194.8 886 C1166.9 834.3 1127.3 794.3 1078.17 768.34"
+            ],
+            "overviewPaths": [
+              "M687.55 247.2 C883.5 445.7 1056.0 662.9 1194.8 886 C1166.9 834.3 1127.3 794.3 1078.17 768.34"
+            ]
+          }
+        ],
+        "places": [
+          {
+            "id": "svo",
+            "x": 1078.17,
+            "y": 768.34,
+            "color": "#397dc1",
+            "tx": 1046.17,
+            "ty": 736.34,
+            "size": 24,
+            "anchor": "end",
+            "lines": [
+              "谢列梅捷沃机场"
+            ],
+            "query": "谢列梅捷沃机场 Russia",
+            "geo": {
+              "lat": 55.9726,
+              "lng": 37.4146
+            },
+            "days": [
+              1,
+              9
+            ]
+          },
+          {
+            "id": "moscow",
+            "x": 1194.8,
+            "y": 886,
+            "color": "#397dc1",
+            "tx": 1162.8,
+            "ty": 936,
+            "size": 24,
+            "anchor": "end",
+            "lines": [
+              "莫斯科市中心"
+            ],
+            "query": "莫斯科市中心 Russia",
+            "geo": {
+              "lat": 55.7512,
+              "lng": 37.6184
+            },
+            "days": [
+              1,
+              2,
+              3,
+              4,
+              9
+            ]
+          },
+          {
+            "id": "tretyakov",
+            "x": 1165.06,
+            "y": 742.1,
+            "color": "#e77e22",
+            "tx": 1087.06,
+            "ty": 818.1,
+            "size": 24,
+            "anchor": "end",
+            "lines": [
+              "特列季亚科夫画廊"
+            ],
+            "query": "特列季亚科夫画廊 Russia",
+            "geo": {
+              "lat": 55.7414,
+              "lng": 37.6208
+            },
+            "days": [
+              2
+            ]
+          },
+          {
+            "id": "sparrow",
+            "x": 1087.06,
+            "y": 886,
+            "color": "#e77e22",
+            "tx": 1225.06,
+            "ty": 988,
+            "size": 24,
+            "anchor": "start",
+            "lines": [
+              "麻雀山"
+            ],
+            "query": "麻雀山 Russia",
+            "geo": {
+              "lat": 55.709,
+              "lng": 37.5449
+            },
+            "days": [
+              2
+            ]
+          },
+          {
+            "id": "kremlin",
+            "x": 1227.83,
+            "y": 806.68,
+            "color": "#618344",
+            "tx": 1259.83,
+            "ty": 774.68,
+            "size": 24,
+            "anchor": "start",
+            "lines": [
+              "克里姆林宫"
+            ],
+            "query": "克里姆林宫 Russia",
+            "geo": {
+              "lat": 55.752,
+              "lng": 37.6175
+            },
+            "days": [
+              3
+            ]
+          },
+          {
+            "id": "stbasil",
+            "x": 1142.52,
+            "y": 822.2,
+            "color": "#618344",
+            "tx": 1004.52,
+            "ty": 924.2,
+            "size": 24,
+            "anchor": "end",
+            "lines": [
+              "圣瓦西里大教堂"
+            ],
+            "query": "圣瓦西里大教堂 Russia",
+            "geo": {
+              "lat": 55.7525,
+              "lng": 37.6231
+            },
+            "days": [
+              3
+            ]
+          },
+          {
+            "id": "petersburg",
+            "x": 687.55,
+            "y": 247.2,
+            "color": "#209aaa",
+            "tx": 719.55,
+            "ty": 215.2,
+            "size": 24,
+            "anchor": "start",
+            "lines": [
+              "圣彼得堡市中心"
+            ],
+            "query": "圣彼得堡市中心 Russia",
+            "geo": {
+              "lat": 59.9343,
+              "lng": 30.3351
+            },
+            "days": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ]
+          },
+          {
+            "id": "isaac",
+            "x": 444.77,
+            "y": 254.6,
+            "color": "#209aaa",
+            "tx": 412.77,
+            "ty": 222.6,
+            "size": 24,
+            "anchor": "end",
+            "lines": [
+              "圣以撒大教堂"
+            ],
+            "query": "圣以撒大教堂 Russia",
+            "geo": {
+              "lat": 59.9343,
+              "lng": 30.3061
+            },
+            "days": [
+              4
+            ]
+          },
+          {
+            "id": "savior",
+            "x": 649.09,
+            "y": 169,
+            "color": "#8865a5",
+            "tx": 727.09,
+            "ty": 107,
+            "size": 24,
+            "anchor": "start",
+            "lines": [
+              "滴血救世主教堂"
+            ],
+            "query": "滴血救世主教堂 Russia",
+            "geo": {
+              "lat": 59.9402,
+              "lng": 30.3286
+            },
+            "days": [
+              5
+            ]
+          },
+          {
+            "id": "hermitage",
+            "x": 474.28,
+            "y": 169,
+            "color": "#8865a5",
+            "tx": 552.28,
+            "ty": 107,
+            "size": 24,
+            "anchor": "start",
+            "lines": [
+              "冬宫"
+            ],
+            "query": "冬宫 Russia",
+            "geo": {
+              "lat": 59.9398,
+              "lng": 30.3146
+            },
+            "days": [
+              5
+            ]
+          },
+          {
+            "id": "pushkin",
+            "x": 618.59,
+            "y": 327,
+            "color": "#df6185",
+            "tx": 756.59,
+            "ty": 429,
+            "size": 24,
+            "anchor": "start",
+            "lines": [
+              "皇村"
+            ],
+            "query": "皇村 Russia",
+            "geo": {
+              "lat": 59.7166,
+              "lng": 30.3958
+            },
+            "days": [
+              6
+            ]
+          },
+          {
+            "id": "peterhof",
+            "x": 607.83,
+            "y": 245.63,
+            "color": "#397dc1",
+            "tx": 745.83,
+            "ty": 347.63,
+            "size": 24,
+            "anchor": "start",
+            "lines": [
+              "彼得霍夫"
+            ],
+            "query": "彼得霍夫 Russia",
+            "geo": {
+              "lat": 59.8845,
+              "lng": 29.9083
+            },
+            "days": [
+              7
+            ]
+          },
+          {
+            "id": "mariinsky",
+            "x": 534.56,
+            "y": 311.42,
+            "color": "#397dc1",
+            "tx": 566.56,
+            "ty": 361.42,
+            "size": 24,
+            "anchor": "start",
+            "lines": [
+              "马林斯基剧院"
+            ],
+            "query": "马林斯基剧院 Russia",
+            "geo": {
+              "lat": 59.9259,
+              "lng": 30.296
+            },
+            "days": [
+              7
+            ]
+          },
+          {
+            "id": "faberge",
+            "x": 566.82,
+            "y": 169,
+            "color": "#e77e22",
+            "tx": 534.82,
+            "ty": 137,
+            "size": 24,
+            "anchor": "end",
+            "lines": [
+              "法贝热博物馆"
+            ],
+            "query": "法贝热博物馆 Russia",
+            "geo": {
+              "lat": 59.935,
+              "lng": 30.3454
+            },
+            "days": [
+              8
+            ]
+          },
+          {
+            "id": "russian-museum",
+            "x": 518.13,
+            "y": 232.08,
+            "color": "#e77e22",
+            "tx": 440.13,
+            "ty": 308.08,
+            "size": 24,
+            "anchor": "end",
+            "lines": [
+              "俄罗斯博物馆"
+            ],
+            "query": "俄罗斯博物馆 Russia",
+            "geo": {
+              "lat": 59.9388,
+              "lng": 30.332
+            },
+            "days": [
+              8
+            ]
+          }
+        ],
+        "overviewPlaceIds": [
+          "svo",
+          "moscow",
+          "sparrow",
+          "stbasil",
+          "petersburg",
+          "isaac",
+          "hermitage",
+          "mariinsky",
+          "faberge",
+          "russian-museum"
+        ],
+        "dailyLayouts": {
+          "1": {
+            "places": [
+              "svo",
+              "moscow"
+            ],
+            "labels": {
+              "svo": {
+                "x": 1046.17,
+                "y": 736.34,
+                "anchor": "end"
+              },
+              "moscow": {
+                "x": 1162.8,
+                "y": 936,
+                "anchor": "end"
+              }
+            },
+            "transport": [
+              {
+                "items": [],
+                "x": 1136.49,
+                "y": 827.17
+              }
+            ]
+          },
+          "2": {
+            "places": [
+              "moscow",
+              "tretyakov",
+              "sparrow"
+            ],
+            "labels": {
+              "moscow": {
+                "x": 1162.8,
+                "y": 936,
+                "anchor": "end"
+              },
+              "tretyakov": {
+                "x": 1087.06,
+                "y": 818.1,
+                "anchor": "end"
+              },
+              "sparrow": {
+                "x": 1225.06,
+                "y": 988,
+                "anchor": "start"
+              }
+            },
+            "transport": [
+              {
+                "items": [],
+                "x": 1179.93,
+                "y": 814.05
+              },
+              {
+                "items": [],
+                "x": 1126.06,
+                "y": 814.05
+              }
+            ]
+          },
+          "3": {
+            "places": [
+              "moscow",
+              "kremlin",
+              "stbasil"
+            ],
+            "labels": {
+              "moscow": {
+                "x": 1162.8,
+                "y": 936,
+                "anchor": "end"
+              },
+              "kremlin": {
+                "x": 1259.83,
+                "y": 774.68,
+                "anchor": "start"
+              },
+              "stbasil": {
+                "x": 1004.52,
+                "y": 924.2,
+                "anchor": "end"
+              }
+            },
+            "transport": [
+              {
+                "items": [],
+                "x": 1211.32,
+                "y": 846.34
+              },
+              {
+                "items": [],
+                "x": 1185.17,
+                "y": 814.44
+              }
+            ]
+          },
+          "4": {
+            "places": [
+              "moscow",
+              "petersburg",
+              "isaac"
+            ],
+            "labels": {
+              "moscow": {
+                "x": 1162.8,
+                "y": 936,
+                "anchor": "end"
+              },
+              "petersburg": {
+                "x": 719.55,
+                "y": 215.2,
+                "anchor": "start"
+              },
+              "isaac": {
+                "x": 412.77,
+                "y": 222.6,
+                "anchor": "end"
+              }
+            },
+            "transport": [
+              {
+                "items": [],
+                "x": 941.17,
+                "y": 566.6
+              },
+              {
+                "items": [],
+                "x": 566.16,
+                "y": 250.9
+              }
+            ]
+          },
+          "5": {
+            "places": [
+              "petersburg",
+              "savior",
+              "hermitage"
+            ],
+            "labels": {
+              "petersburg": {
+                "x": 719.55,
+                "y": 215.2,
+                "anchor": "start"
+              },
+              "savior": {
+                "x": 727.09,
+                "y": 107,
+                "anchor": "start"
+              },
+              "hermitage": {
+                "x": 552.28,
+                "y": 107,
+                "anchor": "start"
+              }
+            },
+            "transport": [
+              {
+                "items": [],
+                "x": 668.32,
+                "y": 208.1
+              },
+              {
+                "items": [],
+                "x": 561.68,
+                "y": 169
+              }
+            ]
+          },
+          "6": {
+            "places": [
+              "petersburg",
+              "pushkin"
+            ],
+            "labels": {
+              "petersburg": {
+                "x": 719.55,
+                "y": 215.2,
+                "anchor": "start"
+              },
+              "pushkin": {
+                "x": 756.59,
+                "y": 429,
+                "anchor": "start"
+              }
+            },
+            "transport": [
+              {
+                "items": [],
+                "x": 653.07,
+                "y": 287.1
+              },
+              {
+                "items": [],
+                "x": 653.07,
+                "y": 287.1
+              }
+            ]
+          },
+          "7": {
+            "places": [
+              "petersburg",
+              "peterhof",
+              "mariinsky"
+            ],
+            "labels": {
+              "petersburg": {
+                "x": 719.55,
+                "y": 215.2,
+                "anchor": "start"
+              },
+              "peterhof": {
+                "x": 745.83,
+                "y": 347.63,
+                "anchor": "start"
+              },
+              "mariinsky": {
+                "x": 566.56,
+                "y": 361.42,
+                "anchor": "start"
+              }
+            },
+            "transport": [
+              {
+                "items": [],
+                "x": 647.69,
+                "y": 246.41
+              },
+              {
+                "items": [],
+                "x": 571.19,
+                "y": 278.52
+              }
+            ]
+          },
+          "8": {
+            "places": [
+              "petersburg",
+              "faberge",
+              "russian-museum"
+            ],
+            "labels": {
+              "petersburg": {
+                "x": 719.55,
+                "y": 215.2,
+                "anchor": "start"
+              },
+              "faberge": {
+                "x": 534.82,
+                "y": 137,
+                "anchor": "end"
+              },
+              "russian-museum": {
+                "x": 440.13,
+                "y": 308.08,
+                "anchor": "end"
+              }
+            },
+            "transport": [
+              {
+                "items": [],
+                "x": 627.18,
+                "y": 208.1
+              },
+              {
+                "items": [],
+                "x": 542.48,
+                "y": 200.54
+              }
+            ]
+          },
+          "9": {
+            "places": [
+              "petersburg",
+              "moscow",
+              "svo"
+            ],
+            "labels": {
+              "petersburg": {
+                "x": 719.55,
+                "y": 215.2,
+                "anchor": "start"
+              },
+              "moscow": {
+                "x": 1162.8,
+                "y": 936,
+                "anchor": "end"
+              },
+              "svo": {
+                "x": 1046.17,
+                "y": 736.34,
+                "anchor": "end"
+              }
+            },
+            "transport": [
+              {
+                "items": [],
+                "x": 941.17,
+                "y": 566.6
+              },
+              {
+                "items": [],
+                "x": 1136.49,
+                "y": 827.17
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

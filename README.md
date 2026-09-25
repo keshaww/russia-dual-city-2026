@@ -5,4 +5,3 @@
 页面基于 [Travel-Plan-Page](https://github.com/do-tongxue/Travel-Plan-Page) 制作，原项目采用 MIT 许可证；许可证与第三方数据说明见 `LICENSE` 和 `THIRD_PARTY_NOTICES.md`。
 
 地图使用 OpenStreetMap，并在主瓦片服务不可达时尝试 OpenStreetMap Deutschland。彩色线段仅代表地点顺序。待办和购票勾选记录存储在访问设备的浏览器里，不会跨设备同步。页面不包含门票 PDF、订单号或二维码。
-

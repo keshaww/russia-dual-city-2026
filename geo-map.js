@@ -178,9 +178,11 @@ function initializeGeoMaps(root = document) {
         svg.append(polyline);
       }
       markers.replaceChildren();
-      for (const place of visiblePlaces) {
-        const p = pixel(place, center, width, height);
+      const occupiedLabels = [];
+      const positionedPlaces = visiblePlaces.map((place) => ({ place, point: pixel(place, center, width, height) }));
+      for (const [index, { place, point: p }] of positionedPlaces.entries()) {
         if (p.x < -90 || p.x > width + 90 || p.y < -50 || p.y > height + 50) continue;
+        const name = place.nameZh || place.name || place.id;
         const marker = document.createElement("button");
         marker.type = "button";
         marker.className = "geo-map-marker";
@@ -190,9 +192,18 @@ function initializeGeoMaps(root = document) {
         marker.dataset.mapRegion = source.id;
         if (day) marker.dataset.placeDay = String(day);
         marker.dataset.placeRole = day ? "当天地点" : "行程地点";
-        marker.setAttribute("aria-label", `${place.nameZh || place.name || place.id}，打开地点地图`);
+        marker.setAttribute("aria-label", `${name}，打开地点地图`);
         marker.setAttribute("aria-haspopup", "dialog");
-        marker.innerHTML = `<span class="geo-marker-dot">${day ? visiblePlaces.indexOf(place) + 1 : ""}</span><span class="geo-marker-label">${escapeHtml(place.nameZh || place.name || place.id)}</span>`;
+        marker.innerHTML = `<span class="geo-marker-dot">${index + 1}</span><span class="geo-marker-label">${escapeHtml(name)}</span>`;
+        if (map.zoom >= 15) {
+          const box = { left: p.x + 22, right: p.x + 30 + Math.min(144, name.length * 12), top: p.y - 13, bottom: p.y + 13 };
+          const nearAnotherMarker = positionedPlaces.some(({ place: other, point }) => other.id !== place.id && point.x >= box.left - 8 && point.x <= box.right + 8 && point.y >= box.top - 8 && point.y <= box.bottom + 8);
+          const overlaps = occupiedLabels.some((used) => box.left < used.right + 8 && box.right + 8 > used.left && box.top < used.bottom + 8 && box.bottom + 8 > used.top);
+          if (!nearAnotherMarker && !overlaps && box.right < width - 8) {
+            marker.classList.add("has-label");
+            occupiedLabels.push(box);
+          }
+        }
         markers.append(marker);
       }
     }

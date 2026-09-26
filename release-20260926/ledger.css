@@ -5,7 +5,14 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.topbar .primary-navigation::-webkit-scrollbar { display:none; }
+.topbar .primary-navigation a { flex:0 0 auto; }
 
 .topbar .travel-nav-link { position:relative; min-width:44px; padding-inline:5px; white-space:nowrap; }
 .topbar .travel-nav-link[aria-current="location"],
@@ -60,8 +67,8 @@ body[data-active-view="ledger"] .topbar { background: rgba(250, 251, 249, .93); 
 @media (max-width: 480px) {
   .topbar { height:auto; min-height:84px; padding:var(--safe-top) 8px 0; flex-direction:column; align-items:stretch; }
   .topbar .wordmark { min-height:30px; padding-left:4px; }
-  .topbar .primary-navigation { width:100%; justify-content:space-between; gap:0; }
-  .topbar .primary-navigation a { min-width:0; min-height:48px; padding-inline:3px; font-size:11px; }
+  .topbar .primary-navigation { width:100%; justify-content:flex-start; gap:8px; }
+  .topbar .primary-navigation a { min-width:44px; min-height:48px; padding-inline:5px; font-size:11px; }
   .section { scroll-margin-top:90px; }
 }
 
@@ -82,7 +89,7 @@ body[data-active-view="ledger"] .topbar { background: rgba(250, 251, 249, .93); 
 .ledger-app button, .ledger-app input, .ledger-app select { font-family: inherit; }
 .ledger-app h1, .ledger-app h2, .ledger-app h3, .ledger-app p { margin: 0; }
 .ledger-page-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
-.ledger-page-header h1 { font-size: clamp(30px, 9vw, 42px); line-height: 1; letter-spacing: -.055em; font-weight: 820; }
+.ledger-page-header h1 { font-size: var(--type-section); line-height: 1.08; letter-spacing: -.055em; font-weight: 820; }
 .ledger-header-actions { display: flex; align-items: center; gap: 5px; }
 .ledger-text-button, .ledger-icon-button {
   min-height: 42px; padding: 0 9px; border: 0; border-radius: 9px;
@@ -101,11 +108,11 @@ body[data-active-view="ledger"] .topbar { background: rgba(250, 251, 249, .93); 
 .ledger-live:empty { display: none; }
 .ledger-tab-panel[hidden] { display: none; }
 .ledger-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; }
-.ledger-section-heading h2 { margin-top: 4px; font-size: 19px; line-height: 1.2; letter-spacing: -.025em; font-weight: 790; }
+.ledger-section-heading h2 { margin-top: 8px; font-size: 21px; line-height: 1.2; letter-spacing: -.025em; font-weight: 790; }
 .ledger-section-kicker { color: #7b898b; font-size: 11px; line-height: 1.3; font-weight: 760; letter-spacing: .07em; }
 .ledger-soft-count { color: #8a9798; font-size: 11px; }
 
-.ledger-members-strip { margin-top: 27px; }
+.ledger-members-strip { margin-top: 24px; }
 .ledger-members-strip-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .ledger-members-strip-heading > div { display: flex; align-items: baseline; gap: 8px; }
 .ledger-members-strip-heading strong { font-size: 19px; font-weight: 790; }
@@ -122,15 +129,15 @@ body[data-active-view="ledger"] .topbar { background: rgba(250, 251, 249, .93); 
 .ledger-avatar-stack .ledger-avatar + .ledger-avatar { margin-left: -5px; border: 2px solid #fff; }
 
 .ledger-entry-card, .ledger-list-section, .ledger-transfer-list, .ledger-member-stats-list, .ledger-stats-overview {
-  border: 1px solid rgba(19,38,47,.1); border-radius: 16px; background: #fff;
+  border: 1px solid rgba(19,38,47,.08); border-radius: 20px; background: #fff;
   box-shadow: 0 12px 32px rgba(18,42,50,.055), 0 1px 3px rgba(18,42,50,.035);
 }
-.ledger-entry-card { margin-top: 27px; padding: 20px; }
-.ledger-converter { margin-top:24px; padding:20px; border:1px solid rgba(19,38,47,.1); border-radius:16px; background:#fff; box-shadow:0 8px 26px rgba(19,38,47,.04); }
-.ledger-converter-form { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; align-items:end; margin-top:17px; }
+.ledger-entry-card { margin-top: 24px; padding: 20px; }
+.ledger-converter { margin-top:24px; padding:20px; border:1px solid rgba(19,38,47,.08); border-radius:20px; background:#fff; box-shadow:0 8px 26px rgba(19,38,47,.04); }
+.ledger-converter-form { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; align-items:end; margin-top:24px; }
 .ledger-converter-rate { grid-column:1 / -1; }
 .ledger-converter-form .ledger-secondary-button { grid-column:1 / -1; }
-.ledger-converter-result { display:block; min-height:30px; margin-top:16px; color:var(--lake); font-size:22px; font-weight:800; letter-spacing:-.03em; }
+.ledger-converter-result { display:block; min-height:30px; margin-top:16px; color:var(--lake); font-size:clamp(24px,7vw,30px); font-weight:800; letter-spacing:-.04em; }
 .ledger-converter-note { margin-top:5px !important; color:#809092; font-size:10px; line-height:1.55; }
 .ledger-clear-rate { margin-top:9px; padding-left:0; }
 .ledger-bill-form { margin-top: 19px; }
@@ -329,9 +336,9 @@ body[data-active-view="ledger"] .topbar { background: rgba(250, 251, 249, .93); 
 .ledger-currency-option:hover, .ledger-currency-option[aria-current="true"] { color: var(--lake); background: #e7f2f3; }
 .ledger-currency-option b { font: 760 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
 .ledger-currency-option span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ledger-field-amount .ledger-amount-input { min-height: 44px; padding: 0 12px; border: 1px solid rgba(19,38,47,.16); border-radius: 11px; background: #fbfcfb; }
+.ledger-field-amount .ledger-amount-input { min-height: 44px; padding: 0 12px; border: 1px solid rgba(19,38,47,.1); border-radius: 16px; background: #fbfcfb; }
 .ledger-converted-field { padding-top: 14px; padding-bottom: 0; }
-.ledger-converted-input-wrap { padding: 0 12px; border: 1px solid rgba(19,38,47,.15); border-radius: 11px; background: #fbfcfb; }
+.ledger-converted-input-wrap { padding: 0 12px; border: 1px solid rgba(19,38,47,.1); border-radius: 16px; background: #fbfcfb; }
 .ledger-converted-field .ledger-input { border: 0 !important; background: transparent; }
 .ledger-person-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 15px 4px; }
 .ledger-person-choice { width: 48px; justify-self: start; }

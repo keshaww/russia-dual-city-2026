@@ -20,6 +20,17 @@
     };
   }
 
+  function revealActiveTab() {
+    const nav = document.querySelector(".primary-navigation");
+    const active = nav?.querySelector('[aria-current]');
+    if (!nav || !active) return;
+    const left = active.offsetLeft - nav.offsetLeft;
+    const right = left + active.offsetWidth;
+    const margin = 12;
+    if (left < nav.scrollLeft + margin) nav.scrollTo({ left: Math.max(0, left - margin), behavior: "smooth" });
+    else if (right > nav.scrollLeft + nav.clientWidth - margin) nav.scrollTo({ left: right - nav.clientWidth + margin, behavior: "smooth" });
+  }
+
   function setVisibleView(nextView, options = {}) {
     const { travelView, ledgerView, travelLinks, ledgerLink, skipLink } = elements();
     if (!travelView || !ledgerView) return;
@@ -43,6 +54,7 @@
       else ledgerLink.removeAttribute("aria-current");
     }
     if (skipLink) skipLink.href = ledgerActive ? "#ledger-root" : "#main";
+    requestAnimationFrame(revealActiveTab);
 
     if (ledgerActive) {
       const tab = location.hash === "#ledger-stats" ? "stats" : location.hash === "#ledger" ? "entry" : "";

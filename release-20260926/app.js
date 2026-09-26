@@ -867,18 +867,36 @@ async function saveSharedChange(collection, value, op = "upsert") {
 
 function saveTodoState() { return Promise.all(state.todos.map((todo) => saveSharedChange("todos", todo))); }
 
+function todoPresentation(todo) {
+  const [rawTitle, ...details] = String(todo.text || "").split("｜");
+  const text = details.join("｜").trim();
+  const timing = text.match(/（([^（）]+)）$/)?.[1] || "";
+  const description = text.replace(/（[^（）]+）$/, "").trim();
+  const title = rawTitle.trim() || String(todo.text || "");
+  const category = /航班|东航|行李直挂|转机/.test(title) ? "航班"
+    : /酒店|寄存|地址/.test(title) ? "住宿"
+    : /火车|夜卧|车票/.test(title) ? "铁路"
+    : /地图|定位/.test(title) ? "路线"
+    : /卢布|现金|支付/.test(title) ? "支付"
+    : /天气|衣物|喷泉/.test(title) ? "出行" : "准备";
+  return { title, description, timing, category };
+}
+
 function renderTodoList() {
   const completed = state.todos.filter((todo) => todo.completed).length;
   $("#todo-progress").textContent = `${completed} / ${state.todos.length}`;
-  $("#todo-list").innerHTML = state.todos.length ? state.todos.map((todo) => `
+  $("#todo-list").innerHTML = state.todos.length ? state.todos.map((todo) => {
+    const view = todoPresentation(todo);
+    return `
     <div class="todo-item${todo.completed ? " is-complete" : ""}" data-todo-id="${escapeHtml(todo.id)}">
       <label>
         <input type="checkbox" ${todo.completed ? "checked" : ""} aria-label="完成：${escapeHtml(todo.text)}">
         <span class="todo-check" aria-hidden="true">✓</span>
-        <span class="todo-text">${escapeHtml(todo.text)}</span>
+        <span class="todo-copy"><strong class="todo-title">${escapeHtml(view.title)}</strong>${view.description ? `<span class="todo-description">${escapeHtml(view.description)}</span>` : ""}<span class="todo-tags"><span>${escapeHtml(view.category)}</span>${view.timing ? `<span>${escapeHtml(view.timing)}</span>` : ""}</span></span>
       </label>
-      <button type="button" class="todo-delete" aria-label="删除：${escapeHtml(todo.text)}">删除</button>
-    </div>`).join("") : `<p class="todo-empty">还没有准备事项，添加第一项吧。</p>`;
+      <details class="todo-actions"><summary aria-label="更多操作：${escapeHtml(view.title)}">···</summary><button type="button" class="todo-delete" aria-label="删除：${escapeHtml(todo.text)}">删除</button></details>
+    </div>`;
+  }).join("") : `<p class="todo-empty">还没有准备事项，添加第一项吧。</p>`;
 }
 
 function renderTravelPrep() {

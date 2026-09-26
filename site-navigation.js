@@ -114,6 +114,7 @@
     });
 
     window.addEventListener("popstate", () => scheduleBrowserRoute({ restore: true }));
+    window.addEventListener("trip:navigate", () => scheduleBrowserRoute());
     window.addEventListener("hashchange", () => scheduleBrowserRoute());
     window.addEventListener("travel-config:ready", () => {
       activeView = viewForHash(location.hash);
@@ -128,4 +129,3 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setup);
   else setup();
 })();
-

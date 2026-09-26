@@ -12,5 +12,5 @@
 .weather-day { display:grid; grid-template-columns:48px minmax(0,1fr) 76px 58px; align-items:center; gap:4px; padding:8px 0; border-bottom:1px solid var(--line); font-size:12px; }
 .weather-day time, .weather-day small { color:var(--muted); }
 .weather-day strong { white-space:nowrap; font-weight:700; }
+.weather-day button { grid-column:1 / -1; width:max-content; border:0; padding:3px 0; background:none; color:var(--lake); font-size:12px; font-weight:700; cursor:pointer; }
 @media(max-width:600px) { .weather-grid { grid-template-columns:1fr; } }
-

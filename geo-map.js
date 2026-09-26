@@ -3,7 +3,7 @@ const geoMapInstances = new WeakMap();
 const GEO_TILE_SIZE = 256;
 const GEO_MIN_ZOOM = 4;
 const GEO_MAX_ZOOM = 17;
-let geoMapOffline = false;
+let geoMapOffline = !navigator.onLine;
 
 function geoPlacePreviewMarkup(place, label) {
   const point = geoPoint(place);
@@ -15,8 +15,10 @@ function geoPlacePreviewMarkup(place, label) {
 
 function setGeoMapsOffline(offline) {
   geoMapOffline = offline;
-  document.querySelectorAll(".geo-map").forEach((element) => geoMapInstances.get(element)?.setOffline(offline));
+  document.querySelectorAll(".geo-map").forEach((element) => geoMapInstances.get(element)?.setOffline(offline, !navigator.onLine));
 }
+window.addEventListener("offline", () => setGeoMapsOffline(true));
+window.addEventListener("online", () => setGeoMapsOffline(false));
 
 function geoPoint(place) {
   const lat = Number(place?.geo?.lat);
@@ -50,7 +52,7 @@ function geoMapMarkup(source, route, expanded = false) {
       <div class="geo-map-controls"><button type="button" data-geo-zoom="in" aria-label="放大地图">+</button><button type="button" data-geo-zoom="out" aria-label="缩小地图">−</button></div>
       <button type="button" class="geo-map-mode" data-geo-mode>切换点位图</button>
       <div class="geo-map-attribution"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a></div>
-      <div class="geo-map-error" hidden>在线底图无法加载，已切换到点位图。</div>
+      <div class="geo-map-error" hidden>离线状态下无法加载地图底图；地点和访问顺序仍可查看。</div>
     </div>
     <div class="map-utility"><span>地点按真实经纬度定位 · 点位图不含道路底图 · 彩色直线只表示游览顺序</span>${expanded ? "" : `<button type="button" data-expand-geo-map="${escapeHtml(source.id)}" data-expand-geo-day="${day}">放大 ↗</button>`}</div>
   </div>`;
@@ -61,11 +63,11 @@ function initializeGeoMaps(root = document) {
     if (geoMapInstances.has(element)) return;
     const source = travelMapSource(state.data.routeMap, element.dataset.geoRegion);
     const day = Number(element.dataset.geoDay);
-    const placeById = new Map(state.data.map.places.filter((place) => geoPoint(place)).map((place) => [place.id, place]));
-    const allRoutes = (source.routes || []).map((route) => ({
-      day: route.day, color: route.color || MAP_ROUTE_PALETTE[(route.day - 1) % MAP_ROUTE_PALETTE.length],
-      places: (route.placeIds || []).map((id) => placeById.get(id)).filter(Boolean)
-    }));
+    const placeById = new Map(state.data.places.filter((place) => geoPoint(place)).map((place) => [place.id, place]));
+    const allRoutes = state.data.days.map((tripDay) => ({
+      day: tripDay.day, color: MAP_ROUTE_PALETTE[(tripDay.day - 1) % MAP_ROUTE_PALETTE.length],
+      places: tripDay.schedule.flatMap((item) => item.locationIds || []).map((id) => placeById.get(id)).filter(Boolean)
+    })).filter((route) => route.places.length);
     const routes = day ? allRoutes.filter((route) => route.day === day) : allRoutes;
     const visiblePlaces = day
       ? [...new Map(routes.flatMap((route) => route.places).map((place) => [place.id, place])).values()]
@@ -82,6 +84,8 @@ function initializeGeoMaps(root = document) {
       map.offline = offline;
       element.classList.toggle("is-offline", offline);
       modeButton.textContent = offline ? "尝试在线底图" : "切换点位图";
+      modeButton.disabled = !navigator.onLine;
+      error.textContent = navigator.onLine ? "在线底图无法加载，已切换到点位图。" : "离线状态下无法加载地图底图；地点和访问顺序仍可查看。";
       error.hidden = !failed;
       clearTimeout(map.timer);
       map.timer = null;
@@ -90,6 +94,8 @@ function initializeGeoMaps(root = document) {
     };
     element.classList.toggle("is-offline", geoMapOffline);
     modeButton.textContent = geoMapOffline ? "尝试在线底图" : "切换点位图";
+    modeButton.disabled = !navigator.onLine;
+    error.hidden = navigator.onLine;
     modeButton.addEventListener("click", (event) => { event.stopPropagation(); setGeoMapsOffline(!map.offline); });
 
     function fit() {
@@ -177,18 +183,32 @@ function initializeGeoMaps(root = document) {
         if (p.x < -90 || p.x > width + 90 || p.y < -50 || p.y > height + 50) continue;
         const marker = document.createElement("button");
         marker.type = "button";
-        marker.className = `geo-map-marker${!day && map.zoom < 10 && !["moscow", "petersburg", "svo", "peterhof", "pushkin"].includes(place.id) ? " is-small" : ""}`;
+        marker.className = "geo-map-marker";
         marker.style.left = `${p.x}px`;
         marker.style.top = `${p.y}px`;
         marker.dataset.placeId = place.id;
         marker.dataset.mapRegion = source.id;
+        if (day) marker.dataset.placeDay = String(day);
         marker.dataset.placeRole = day ? "当天地点" : "行程地点";
         marker.setAttribute("aria-label", `${place.nameZh || place.name || place.id}，打开地点地图`);
         marker.setAttribute("aria-haspopup", "dialog");
-        marker.innerHTML = `<span class="geo-marker-dot"></span><span class="geo-marker-label">${escapeHtml(place.nameZh || place.name || place.id)}</span>`;
+        marker.innerHTML = `<span class="geo-marker-dot">${day ? visiblePlaces.indexOf(place) + 1 : ""}</span><span class="geo-marker-label">${escapeHtml(place.nameZh || place.name || place.id)}</span>`;
         markers.append(marker);
       }
     }
+
+    map.focusPlace = (placeId) => {
+      const place = placeById.get(placeId);
+      if (!place) return;
+      map.center = geoPoint(place);
+      map.zoom = Math.max(map.zoom, 14);
+      draw();
+      const marker = [...markers.querySelectorAll(".geo-map-marker")].find((item) => item.dataset.placeId === placeId);
+      if (marker) {
+        marker.classList.add("is-focused");
+        marker.click();
+      }
+    };
 
     function changeZoom(delta) {
       map.zoom = Math.max(GEO_MIN_ZOOM, Math.min(GEO_MAX_ZOOM, map.zoom + delta));
@@ -223,3 +243,8 @@ function initializeGeoMaps(root = document) {
   });
 }
 
+function focusGeoMapPlace(placeId) {
+  if (!placeId) return;
+  const element = document.querySelector("#route-explorer .geo-map");
+  if (element) geoMapInstances.get(element)?.focusPlace(placeId);
+}

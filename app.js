@@ -376,21 +376,24 @@ function costText(cost) {
 
 function ticketsForDay(day) {
   if (!moduleEnabled("itinerary")) return [];
-  return (state.data.ticketPlanning?.items || []).filter((ticket) =>
-    ticket.dayId ? ticket.dayId === day.id : ticket.day === day.day
-  );
+  const ids = new Set(day.schedule.map((item) => item.id));
+  return (state.data.ticketPlanning?.items || []).filter((ticket) => ids.has(ticket.activityId));
 }
 
 function ticketsForSchedule(day, item) {
   if (!moduleEnabled("itinerary")) return [];
-  const tickets = ticketsForDay(day);
-  if (Array.isArray(item.ticketIds)) return tickets.filter((ticket) => item.ticketIds.includes(ticket.id));
-  if (item.id) {
-    const explicit = tickets.filter((ticket) => (ticket.scheduleItemIds || ticket.itemIds || []).includes(item.id));
-    if (explicit.length) return explicit;
-  }
-  const lowerText = String(item.text || item.title || "").toLocaleLowerCase();
-  return tickets.filter((ticket) => (ticket.scheduleMatchTerms || []).some((term) => lowerText.includes(term.toLocaleLowerCase())));
+  return ticketsForDay(day).filter((ticket) => ticket.activityId === item.id);
+}
+
+function activityAtLocation(placeId, dayNumber = 0) {
+  const days = dayNumber ? state.data.days.filter((day) => day.day === dayNumber) : state.data.days;
+  return days.flatMap((day) => day.schedule.filter((item) => item.locationIds?.includes(placeId)).map((item) => ({ day, item })));
+}
+
+function locationFor(id) { return state.data.places.find((place) => place.id === id); }
+function activityLabel(item) { return String(item.text || "").split("｜")[0]; }
+function activityTransport(item) {
+  return ({ walking: "步行", metro: "地铁", taxi: "Yandex 打车", train: "火车/轨道交通", flight: "航班" })[item.transportType] || "";
 }
 
 function isTicketPurchased(ticket) {
@@ -432,12 +435,12 @@ function inlineTicketMarkup(ticket) {
         <input type="checkbox" value="${escapeHtml(ticket.id)}" ${purchased ? "checked" : ""} aria-label="${purchased ? "取消已购票" : "标记为已购票"}：${escapeHtml(title)}">
         <span class="schedule-ticket__check" aria-hidden="true">✓</span>
         <span class="schedule-ticket__content">
-          <span class="schedule-ticket__status">${purchased ? "已购票" : escapeHtml(ticketRequirement(ticket))}</span>
+          <span class="schedule-ticket__status">${purchased ? "✓ 已购票" : `待购票 · ${escapeHtml(ticketRequirement(ticket))}`}</span>
           <strong>${escapeHtml(title)}</strong>
           <small>${escapeHtml(ticketGuidance(ticket))}</small>
         </span>
       </label>
-      <button type="button" class="schedule-ticket__open" data-ticket-open="${escapeHtml(ticket.id)}" aria-haspopup="dialog" aria-controls="ticket-dialog">查看</button>
+      <button type="button" class="schedule-ticket__open" data-ticket-open="${escapeHtml(ticket.id)}" aria-haspopup="dialog" aria-controls="ticket-dialog">${purchased && ticketDocument(ticket) ? "查看票券" : "票务详情"}</button>
     </div>`;
 }
 
@@ -460,6 +463,13 @@ function dailyTransportMarkup(day) {
     <p>${escapeHtml(leg.note)}</p></li>`).join("")}</ol></section>`;
 }
 
+function dayWeatherMarkup(day) {
+  const weather = window.TravelWeather?.forDay?.(day.date, day.weatherCity);
+  if (!weather) return `<span>${escapeHtml(day.locations.at(-1) || "")} · 预报暂不可用</span>`;
+  return `<strong>${escapeHtml(weather.city)} ${escapeHtml(weather.condition)} ${weather.minimum}°～${weather.maximum}°</strong>
+    <span>降雨概率 ${weather.rainProbability}%${weather.rainAfter ? ` · ${weather.rainAfter} 后可能有雨` : ""}</span>`;
+}
+
 function dayCard(day) {
   const today = todayForTrip();
   const isToday = day.date === today;
@@ -467,14 +477,16 @@ function dayCard(day) {
   const schedule = day.schedule.map((item) => {
     const destinations = navigationDestinations(item);
     const mapLinks = destinations.map((destination) => `
-      <button type="button" class="schedule-map-link" data-map-id="${escapeHtml(destination.id || "")}" data-map-query="${escapeHtml(destination.query)}" data-map-url="${escapeHtml(destination.url || "")}" data-map-label="${escapeHtml(destination.label)}" aria-haspopup="dialog" aria-controls="place-map" aria-label="查看 ${escapeHtml(destination.label)} 的地图">📍 ${escapeHtml(destination.label)}</button>
+      <button type="button" class="schedule-map-link" data-focus-activity="${escapeHtml(item.id)}" data-focus-place="${escapeHtml(destination.id)}" aria-label="在路线地图定位 ${escapeHtml(destination.label)}">地图 · ${escapeHtml(destination.label)}</button>
     `).join("");
     const scheduleTickets = ticketsForSchedule(day, item).map(inlineTicketMarkup).join("");
     return `
-      <li class="schedule-item">
+      <li class="schedule-item" id="activity-${escapeHtml(item.id)}" data-activity-id="${escapeHtml(item.id)}">
         <span class="schedule-time">${escapeHtml(item.time)}</span>
         <div class="schedule-content">
           <div class="schedule-text">${escapeHtml(item.text)}</div>
+          ${activityTransport(item) ? `<small class="activity-transport">${escapeHtml(activityTransport(item))}${Number.isFinite(item.travelDurationMin) ? ` ${item.travelDurationMin} 分钟` : ""}</small>` : ""}
+          ${["attraction", "walk"].includes(item.type) && item.locationIds?.length ? `<small class="activity-weather" data-activity-weather="${escapeHtml(item.id)}" hidden></small>` : ""}
           ${scheduleTickets}
           ${mapLinks ? `<div class="schedule-map-links">${mapLinks}</div>` : ""}
         </div>
@@ -501,6 +513,7 @@ function dayCard(day) {
         <span class="day-chevron" aria-hidden="true">+</span>
       </button>
       <div class="day-detail" id="day-detail-${day.day}" ${expanded ? "" : "hidden"}>
+        <div class="day-weather" data-day-weather="${escapeHtml(day.date)}">${dayWeatherMarkup(day)}</div>
         <ol class="schedule">${schedule}</ol>
         ${dailyTransportMarkup(day)}
         ${hubTransfersMarkup(day)}
@@ -512,70 +525,9 @@ function dayCard(day) {
 }
 
 function navigationDestinations(item) {
-  const policy = state.data.mapLinks?.navigationPolicy || { noNavigationTypes: [], selfNavigationTypes: [] };
-  if (policy.noNavigationTypes.includes(item.type)) return [];
-  const referencedPlaceIds = [...new Set([
-    ...(Array.isArray(item.placeIds) ? item.placeIds : []),
-    ...(item.placeId ? [item.placeId] : [])
-  ])];
-  if (referencedPlaceIds.length) {
-    return referencedPlaceIds.map((placeId) => state.data.places.find((place) => place.id === placeId)).filter(Boolean).map((place) => ({
-      id: place.id,
-      label: place.nameZh || place.name,
-      query: place.navigation?.query || place.googleMapsQuery || place.address || `${place.nameZh || place.name}${place.cityOrArea ? `, ${place.cityOrArea}` : ""}`,
-      directUrl: Boolean(place.navigation?.url || place.googleMapsUrl),
-      url: place.navigation?.url || place.googleMapsUrl || ""
-    }));
-  }
-  const text = String(item.text || item.title || "");
-  const lowerText = text.toLocaleLowerCase();
-  const explicit = (state.data.mapLinks?.navigationPlaces || [])
-    .filter((place) => place.matchTerms.some((term) => lowerText.includes(term.toLocaleLowerCase())))
-    .map((place) => ({
-      id: place.id,
-      label: place.label,
-      query: place.query,
-      priority: place.priority || 1,
-      matchIndex: Math.max(...place.matchTerms.map((term) => lowerText.lastIndexOf(term.toLocaleLowerCase())))
-    }));
-  const highestExplicitPriority = explicit.reduce((highest, place) => Math.max(highest, place.priority), 0);
-  const selectedExplicit = highestExplicitPriority > 1
-    ? explicit.filter((place) => place.priority === highestExplicitPriority)
-    : explicit;
-
-  const catalogPlaces = state.data.places
-    .filter((place) => [place.name, place.nameZh].filter(Boolean).some((name) => lowerText.includes(name.toLocaleLowerCase())))
-    .map((place) => ({
-      id: place.id,
-      label: place.nameZh || place.name,
-      query: place.googleMapsUrl || [place.name, place.cityOrArea].filter(Boolean).join(", "),
-      directUrl: Boolean(place.googleMapsUrl),
-      matchIndex: Math.max(...[place.name, place.nameZh].filter(Boolean).map((name) => lowerText.lastIndexOf(name.toLocaleLowerCase())))
-    }));
-
-  const restaurants = state.data.restaurants
-    .filter((restaurant) => lowerText.includes(restaurant.name.toLocaleLowerCase()))
-    .map((restaurant) => ({
-      id: `restaurant-${restaurant.name}`,
-      label: restaurant.name,
-      query: restaurant.googleMapsUrl || `${restaurant.name}, ${restaurant.city}`,
-      directUrl: Boolean(restaurant.googleMapsUrl),
-      matchIndex: lowerText.lastIndexOf(restaurant.name.toLocaleLowerCase())
-    }));
-
-  const specificExplicit = selectedExplicit.filter((place) => place.priority > 1);
-  let destinations = specificExplicit.length
-    ? [...specificExplicit, ...restaurants]
-    : catalogPlaces.length
-      ? [...catalogPlaces, ...restaurants]
-      : [...selectedExplicit, ...restaurants];
-  destinations = destinations.filter((place, index, all) => all.findIndex((candidate) => candidate.id === place.id) === index);
-
-  if (policy.selfNavigationTypes.includes(item.type) && destinations.length > 1 && !specificExplicit.length) {
-    destinations.sort((first, second) => second.matchIndex - first.matchIndex);
-    return [destinations[0]];
-  }
-  return destinations;
+  return (item.locationIds || []).map(locationFor).filter(Boolean).map((place) => ({
+    id: place.id, label: place.nameZh || place.name
+  }));
 }
 
 function currentTripDay() {
@@ -588,7 +540,16 @@ function renderTimeline() {
   state.expandedDay = today;
   $("#day-count").textContent = `${state.data.days.length} DAYS`;
   $("#timeline").innerHTML = state.data.days.map(dayCard).join("");
+  renderNextActivity();
   $("#timeline").onclick = (event) => {
+    const mapButton = event.target.closest("[data-focus-activity]");
+    if (mapButton) {
+      event.stopPropagation();
+      const day = state.data.days.find((candidate) => candidate.schedule.some((item) => item.id === mapButton.dataset.focusActivity));
+      const item = day?.schedule.find((candidate) => candidate.id === mapButton.dataset.focusActivity);
+      if (item) navigateToActivity(day, item, "route", mapButton.dataset.focusPlace);
+      return;
+    }
     const ticketButton = event.target.closest("[data-ticket-open]");
     if (ticketButton) {
       openTicketDialog(ticketButton.dataset.ticketOpen, ticketButton);
@@ -619,6 +580,114 @@ function renderTimeline() {
   };
 }
 
+function renderNextActivity() {
+  const root = $("#next-activity");
+  if (!root) return;
+  const now = new Date();
+  const today = todayForTrip();
+  const clock = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Moscow", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(now);
+  const next = state.data.days.flatMap((day) => day.schedule.map((item) => ({ day, item })))
+    .find(({ day, item }) => day.date > today || (day.date === today && (item.time.match(/^\d{2}:\d{2}/)?.[0] || "23:59") >= clock));
+  if (!next) { root.hidden = true; return; }
+  const { day, item } = next;
+  const booking = ticketsForSchedule(day, item)[0];
+  root.hidden = false;
+  root.innerHTML = `<span class="section-kicker">NEXT ACTIVITY · DAY ${String(day.day).padStart(2, "0")}</span>
+    <strong>${escapeHtml(day.date.slice(5))} ${escapeHtml(item.time)} · ${escapeHtml(activityLabel(item))}</strong>
+    <div class="next-activity-actions">
+      ${item.locationIds?.length ? `<button type="button" data-next-map="${escapeHtml(item.id)}">地图</button>` : ""}
+      <button type="button" data-next-detail="${escapeHtml(item.id)}">详情</button>
+      ${booking ? `<button type="button" data-ticket-open="${escapeHtml(booking.id)}">${isTicketPurchased(booking) ? "票券" : "待购票"}</button>` : ""}
+    </div>`;
+  root.onclick = (event) => {
+    const map = event.target.closest("[data-next-map]");
+    const detail = event.target.closest("[data-next-detail]");
+    const ticket = event.target.closest("[data-ticket-open]");
+    if (map) navigateToActivity(day, item, "route", item.locationIds[0]);
+    else if (detail) navigateToActivity(day, item, "itinerary");
+    else if (ticket) openTicketDialog(ticket.dataset.ticketOpen, ticket);
+  };
+}
+
+function navigateToActivity(day, item, view = "itinerary", placeId = "") {
+  const url = new URL(location.href);
+  url.searchParams.set("date", day.date);
+  url.searchParams.set("activity", item.id);
+  url.hash = view === "route" ? "route" : "itinerary";
+  history.pushState({ activityId: item.id }, "", url);
+  window.dispatchEvent(new Event("trip:navigate"));
+  if (view === "route") {
+    renderRoutePanel(undefined, day.day);
+    focusGeoMapPlace(placeId || item.locationIds?.[0]);
+    $("#route")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  } else {
+    openActivityInItinerary(day.date, item.id);
+  }
+}
+
+function openActivityInItinerary(date, activityId = "") {
+  const day = state.data.days.find((candidate) => candidate.date === date);
+  if (!day) return;
+  const card = $(`[data-day="${day.day}"]`);
+  if (!card) return;
+  const toggle = $(".day-toggle", card);
+  if (toggle.getAttribute("aria-expanded") !== "true") toggle.click();
+  const target = activityId ? $(`#activity-${activityId}`, card) : toggle;
+  target?.scrollIntoView({ behavior: "smooth", block: "center" });
+  if (target && activityId) {
+    target.classList.add("is-linked-highlight");
+    setTimeout(() => target.classList.remove("is-linked-highlight"), 1800);
+  }
+}
+
+function updateTimelineWeather() {
+  for (const day of state.data.days) {
+    const card = $(`[data-day="${day.day}"]`);
+    const header = card?.querySelector("[data-day-weather]");
+    if (header) header.innerHTML = dayWeatherMarkup(day);
+    const forecast = window.TravelWeather?.forDay?.(day.date, day.weatherCity);
+    card?.querySelectorAll("[data-activity-weather]").forEach((hint) => {
+      hint.hidden = !forecast || forecast.rainProbability < 30;
+      if (forecast) hint.textContent = `降雨概率 ${forecast.rainProbability}%`;
+    });
+  }
+}
+
+function applyTripDeepLink() {
+  if (!state.data || !moduleEnabled("itinerary")) return;
+  const params = new URLSearchParams(location.search);
+  const date = params.get("date");
+  const activityId = params.get("activity");
+  const day = state.data.days.find((candidate) => candidate.date === date);
+  if (!day || (activityId && !day.schedule.some((item) => item.id === activityId))) return;
+  if (location.hash === "#route" && activityId && moduleEnabled("overview")) {
+    const item = day.schedule.find((candidate) => candidate.id === activityId);
+    renderRoutePanel(undefined, day.day);
+    focusGeoMapPlace(item.locationIds?.[0]);
+    $("#route")?.scrollIntoView({ block: "start" });
+  } else if (location.hash === "#itinerary" || !location.hash) {
+    openActivityInItinerary(date, activityId);
+  }
+}
+
+window.TravelTrip = {
+  openDay(date) {
+    if (!state.data?.days.some((day) => day.date === date)) return;
+    const url = new URL(location.href);
+    url.searchParams.set("date", date);
+    url.searchParams.delete("activity");
+    url.hash = "itinerary";
+    history.pushState({ date }, "", url);
+    window.dispatchEvent(new Event("trip:navigate"));
+    openActivityInItinerary(date);
+  },
+  openActivity(id, view = "itinerary") {
+    const day = state.data?.days.find((candidate) => candidate.schedule.some((item) => item.id === id));
+    const item = day?.schedule.find((candidate) => candidate.id === id);
+    if (item) navigateToActivity(day, item, view);
+  }
+};
+
 function updateInlineTicketState(ticketId, purchased) {
   const ticketData = state.data.ticketPlanning.items.find((item) => item.id === ticketId);
   if (!ticketData) return;
@@ -626,9 +695,9 @@ function updateInlineTicketState(ticketId, purchased) {
     ticket.classList.toggle("is-purchased", purchased);
     ticket.querySelector("input").checked = purchased;
     ticket.querySelector("input").setAttribute("aria-label", `${purchased ? "取消已购票" : "标记为已购票"}：${ticketTitle(ticketData)}`);
-    ticket.querySelector(".schedule-ticket__status").textContent = purchased ? "已购票" : ticketRequirement(ticketData);
+    ticket.querySelector(".schedule-ticket__status").textContent = purchased ? "✓ 已购票" : `待购票 · ${ticketRequirement(ticketData)}`;
   });
-  const day = state.data.days.find((item) => ticketData.dayId ? item.id === ticketData.dayId : item.day === ticketData.day);
+  const day = state.data.days.find((item) => item.schedule.some((activity) => activity.id === ticketData.activityId));
   const dayCardElement = day ? $(`[data-day="${day.day}"]`) : null;
   const badge = dayCardElement ? $(".day-ticket-summary", dayCardElement) : null;
   const dayTickets = day ? ticketsForDay(day) : [];
@@ -858,7 +927,7 @@ function renderBookingChecklist() {
   const done = tickets.filter(isTicketPurchased).length;
   $("#booking-progress").textContent = `${done} / ${tickets.length}`;
   root.innerHTML = tickets.map((ticket) => {
-    const day = state.data.days.find((item) => item.day === ticket.day);
+    const day = state.data.days.find((item) => item.schedule.some((activity) => activity.id === ticket.activityId));
     const url = safeExternalUrl(ticket.officialUrl || ticket.booking?.officialUrl);
     return `<div class="booking-checklist-item${isTicketPurchased(ticket) ? " is-complete" : ""}">
       <label><input type="checkbox" data-booking-ticket="${escapeHtml(ticket.id)}" ${isTicketPurchased(ticket) ? "checked" : ""}>
@@ -902,6 +971,8 @@ function openTicketDialog(ticketId, opener) {
   const localDocument = localAssetUrl(document?.url);
   const externalDocument = !localDocument ? safeExternalUrl(document?.url) : "";
   const officialUrl = safeExternalUrl(ticket.officialUrl || ticket.booking?.officialUrl || ticket.booking?.purchaseUrl);
+  const linkedDay = state.data.days.find((day) => day.schedule.some((item) => item.id === ticket.activityId));
+  const linkedActivity = linkedDay?.schedule.find((item) => item.id === ticket.activityId);
   const extension = localDocument.split(/[?#]/)[0].split(".").at(-1)?.toLocaleLowerCase();
   let preview = "";
   if (localDocument && ["png", "jpg", "jpeg", "webp", "gif", "svg"].includes(extension)) {
@@ -916,9 +987,11 @@ function openTicketDialog(ticketId, opener) {
   ].filter(Boolean).join("");
   $("#ticket-dialog-body").innerHTML = `
     <p class="ticket-dialog__status">${escapeHtml(isTicketPurchased(ticket) ? "已标记购票" : ticketRequirement(ticket))}</p>
+    ${linkedActivity ? `<p class="ticket-dialog__guidance">DAY ${String(linkedDay.day).padStart(2, "0")} · ${escapeHtml(linkedDay.date)} · ${escapeHtml(linkedActivity.time)}</p>` : ""}
     ${ticketGuidance(ticket) ? `<p class="ticket-dialog__guidance">${escapeHtml(ticketGuidance(ticket))}</p>` : ""}
     ${preview || (!links ? `<p class="ticket-dialog__empty">当前没有可预览的票据文件或官方链接。</p>` : "")}
-    ${links ? `<div class="ticket-dialog__links">${links}</div>` : ""}`;
+    ${links ? `<div class="ticket-dialog__links">${links}</div>` : ""}
+    ${!isTicketPurchased(ticket) ? `<button type="button" class="ticket-dialog__todo" data-booking-todo="${escapeHtml(ticket.id)}">查看待购票清单</button>` : ""}`;
   if (typeof dialog.showModal === "function") dialog.showModal();
   else dialog.setAttribute("open", "");
   $("#ticket-dialog-close").focus();
@@ -932,6 +1005,17 @@ function setupTicketDialog() {
     else dialog.removeAttribute("open");
   };
   $("#ticket-dialog-close").onclick = close;
+  dialog.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-booking-todo]");
+    if (!button) return;
+    const ticketId = button.dataset.bookingTodo;
+    close();
+    history.pushState({}, "", "#prep");
+    const checklist = $(`[data-booking-ticket="${ticketId}"]`)?.closest(".booking-checklist-item");
+    checklist?.scrollIntoView({ behavior: "smooth", block: "center" });
+    checklist?.classList.add("is-linked-highlight");
+    setTimeout(() => checklist?.classList.remove("is-linked-highlight"), 1800);
+  });
   dialog.addEventListener("click", (event) => { if (event.target === dialog) close(); });
   dialog.addEventListener("close", () => {
     const body = $("#ticket-dialog-body");
@@ -1018,7 +1102,6 @@ async function init() {
     if (moduleEnabled("flights")) renderFlights();
     if (moduleEnabled("overview")) setupRouteExplorer();
     if (moduleEnabled("itinerary")) {
-      setupPlaceMap();
       setupTicketDialog();
     }
     if (moduleEnabled("todo") || moduleEnabled("itinerary")) {
@@ -1031,7 +1114,13 @@ async function init() {
         state.purchasedTickets = new Set();
       }
     }
-    if (moduleEnabled("itinerary")) renderTimeline();
+    if (moduleEnabled("itinerary")) {
+      renderTimeline();
+      updateTimelineWeather();
+      window.addEventListener("travel-weather:updated", updateTimelineWeather);
+      window.addEventListener("popstate", () => requestAnimationFrame(applyTripDeepLink));
+      requestAnimationFrame(applyTripDeepLink);
+    }
     if (moduleEnabled("driving")) renderRental();
     if (moduleEnabled("todo")) renderTravelPrep();
     if (moduleEnabled("ledger")) {
@@ -1045,4 +1134,3 @@ async function init() {
 }
 
 document.addEventListener("DOMContentLoaded", init);
-

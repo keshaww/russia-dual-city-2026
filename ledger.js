@@ -170,6 +170,11 @@
 
   async function refreshRate(force = false) {
     if (rateRefreshing || (!force && autoRate?.checkedOn === todayUtc())) return;
+    if (!navigator.onLine) {
+      rateUnavailable = true;
+      if (ledgerData) { captureBillDraft(); renderApp(); }
+      return;
+    }
     rateRefreshing = true;
     try {
       const response = await fetch("https://open.er-api.com/v6/latest/RUB", {
@@ -975,8 +980,8 @@
   function renderConverter() {
     const rate = currentRate();
     const updatedLabel = rate
-      ? `1 RUB ≈ ${rate} CNY · 数据日期 ${autoRate.sourceDate}${autoRate.checkedOn === todayUtc() ? "" : " · 离线缓存"}`
-      : rateUnavailable ? "今日汇率暂不可用，请联网后重开页面" : "正在获取今日汇率…";
+      ? `1 RUB ≈ ${rate} CNY · 最后更新 ${autoRate.sourceDate}${!navigator.onLine || rateUnavailable || autoRate.checkedOn !== todayUtc() ? " · 离线汇率" : ""}`
+      : rateUnavailable ? "暂无已缓存汇率；网络恢复后会自动更新" : "正在获取今日汇率…";
     return `<section class="ledger-converter" aria-labelledby="ledger-converter-title">
       <div class="ledger-section-heading"><div><p class="ledger-section-kicker">RUB ⇄ CNY</p><h2 id="ledger-converter-title">卢布换算</h2></div></div>
       <form data-ledger-form="converter" class="ledger-converter-form">
@@ -2006,6 +2011,8 @@
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) void refreshRate();
     });
+    window.addEventListener("offline", () => { captureBillDraft(); renderApp(); });
+    window.addEventListener("online", () => { void refreshRate(true); });
     setInterval(() => { if (!document.hidden) void refreshRate(); }, 30 * 60 * 1000);
     ledgerRoot.removeAttribute("aria-busy");
     return deepClone(ledgerData);
@@ -2030,4 +2037,3 @@
   // The page controller initializes Ledger only when the module is enabled.
   // Standalone consumers can continue to call TravelLedger.init(options) explicitly.
 })();
-

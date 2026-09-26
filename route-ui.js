@@ -8,7 +8,8 @@ const transportNames = {
 };
 
 function mapRouteDefinitions(source) {
-  return routeLayersFor(source).map(({ day, color }) => ({ day, color }));
+  return state.data.days.filter((day) => day.schedule.some((item) => item.locationIds?.length))
+    .map((day) => ({ day: day.day, color: MAP_ROUTE_PALETTE[(day.day - 1) % MAP_ROUTE_PALETTE.length] }));
 }
 
 function dailyMapLayoutFor(source, dayNumber) {
@@ -20,10 +21,8 @@ function dailyMapLayoutFor(source, dayNumber) {
 }
 
 function placeOptions(source, placeId) {
-  const place = placeLayersFor(source).find((item) => item.id === placeId);
-  if (!place) return [[placeId, placeId]];
-  if (Array.isArray(place.options) && place.options.length) return place.options.map((option) => [option.label, option.query]);
-  return [[place.lines?.at(-1) || placeId, place.query || place.lines?.[0] || placeId]];
+  const place = locationFor(placeId);
+  return place ? [[place.nameZh || place.name, place.query || place.nameZh || place.name]] : [[placeId, placeId]];
 }
 
 function scheduleItemsForPin(day, pin) {
@@ -174,17 +173,25 @@ function setupRouteExplorer() {
       return;
     }
     if (event.target.closest("[data-close-route-popover]")) { closePopover(true); return; }
+    const linkedActivity = event.target.closest("[data-open-activity]");
+    if (linkedActivity) {
+      closePopover();
+      window.TravelTrip.openActivity(linkedActivity.dataset.openActivity);
+      return;
+    }
     const placePin = event.target.closest("[data-place-id]");
     if (placePin) {
       const source = travelMapSource(state.data?.routeMap, placePin.dataset.mapRegion);
       const options = placeOptions(source, placePin.dataset.placeId);
       const [label] = options[0];
-      const place = (state.data.map.places || []).find((item) => item.id === placePin.dataset.placeId);
+      const place = locationFor(placePin.dataset.placeId);
       const lat = Number(place?.geo?.lat);
       const lng = Number(place?.geo?.lng);
       const marker = Number.isFinite(lat) && Number.isFinite(lng);
       const osmUrl = marker ? `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=15/${lat}/${lng}` : `https://www.openstreetmap.org/search?query=${encodeURIComponent(label)}`;
+      const linked = activityAtLocation(placePin.dataset.placeId, Number(placePin.dataset.placeDay) || 0);
       showPopover(placePin, `<header><small>${escapeHtml(placePin.dataset.placeRole)}</small><strong>${escapeHtml(label)}</strong></header>
+        ${linked.map(({ day, item }) => `<div class="route-linked-activity"><span>DAY ${String(day.day).padStart(2, "0")} · ${escapeHtml(day.date.slice(5))} · ${escapeHtml(item.time)}</span><button type="button" data-open-activity="${escapeHtml(item.id)}">查看当天行程</button></div>`).join("")}
         ${geoPlacePreviewMarkup(place, label)}
         <footer><a href="${osmUrl}" target="_blank" rel="noopener noreferrer">用 OpenStreetMap 打开 ↗</a><small>实际导航请核对当地实时交通信息。</small></footer>`, true);
       return;
@@ -233,4 +240,3 @@ function setupRouteExplorer() {
   $("#map-dialog").addEventListener("close", () => closePopover());
   $$(".day-detail:not([hidden])").forEach(activateDayMaps);
 }
-

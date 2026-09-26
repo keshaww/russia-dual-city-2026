@@ -471,6 +471,25 @@ button:focus-visible,a:focus-visible {outline:2px solid var(--lake);outline-offs
 .geo-map-marker.is-small .geo-marker-label { display:none; }
 .geo-map-marker.is-small .geo-marker-dot { width:9px; height:9px; background:#497ca8; }
 .geo-map-marker:hover .geo-marker-label,.geo-map-marker:focus-visible .geo-marker-label { display:block; }
+.geo-map-marker .geo-marker-label { display:none; }
+.geo-map-marker.is-focused .geo-marker-label { display:block; }
+.geo-map-marker .geo-marker-dot { display:grid; place-items:center; min-width:22px; height:22px; padding:0 4px; border-radius:50%; background:var(--lake); border:2px solid white; color:white; font:800 11px/1 system-ui,sans-serif; box-shadow:0 1px 6px #173b4a66; text-shadow:none; }
+.geo-map-marker.is-focused .geo-marker-dot { background:var(--terracotta); transform:scale(1.18); }
+.route-linked-activity { display:flex; flex-direction:column; gap:5px; padding:10px 0; border-bottom:1px solid var(--line); font-size:12px; }
+.route-linked-activity button, .ticket-dialog__todo { width:max-content; border:0; padding:5px 0; background:none; color:var(--lake); font-weight:750; cursor:pointer; }
+.day-weather { display:flex; flex-wrap:wrap; gap:4px 10px; margin:0 0 18px; padding:11px 13px; background:var(--lake-soft); border-radius:10px; font-size:12px; }
+.activity-transport, .activity-weather { display:inline-block; margin:5px 8px 0 0; color:var(--muted); font-size:11px; }
+.next-activity { margin:0 0 18px; padding:16px; border:1px solid var(--line); border-radius:var(--radius-md); background:var(--surface); }
+.next-activity .section-kicker { display:block; margin:0 0 8px; }
+.next-activity strong { display:block; font-size:14px; line-height:1.5; }
+.next-activity-actions { display:flex; gap:8px; margin-top:10px; }
+.next-activity-actions button { min-height:34px; padding:0 11px; border:1px solid var(--line); border-radius:8px; background:var(--paper); color:var(--ink); cursor:pointer; }
+.is-linked-highlight { background:var(--lake-soft) !important; border-radius:10px; transition:background 1.8s; }
+.network-status, .update-status { position:fixed; z-index:50; right:10px; top:calc(52px + var(--safe-top)); max-width:calc(100vw - 20px); padding:7px 11px; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.96); color:var(--ink); box-shadow:var(--shadow); font-size:12px; font-weight:700; }
+.update-status { top:calc(88px + var(--safe-top)); }
+.update-status button { margin-left:8px; padding:3px 5px; border:0; background:none; color:var(--lake); font-size:12px; font-weight:800; cursor:pointer; }
+.network-status[hidden], .update-status[hidden] { display:none; }
+@media(max-width:480px) { .network-status { top:calc(88px + var(--safe-top)); } .update-status { top:calc(124px + var(--safe-top)); } }
 .geo-map-controls { position:absolute; z-index:3; top:12px; right:12px; display:grid; border:1px solid #9dadb2; border-radius:7px; overflow:hidden; box-shadow:0 2px 8px #13262f33; }
 .geo-map-controls button { width:36px; height:36px; border:0; background:white; color:var(--ink); font-size:24px; line-height:1; cursor:pointer; }
 .geo-map-controls button + button { border-top:1px solid #cbd4d2; }
@@ -513,4 +532,3 @@ button:focus-visible,a:focus-visible {outline:2px solid var(--lake);outline-offs
 .booking-checklist-item small { display:block; margin-top:3px; color:var(--muted); font-size:10px; }
 .booking-checklist-item a { flex:none; color:#205e6b; font-size:11px; font-weight:700; text-decoration:none; }
 .booking-checklist-item.is-complete strong { color:#61806b; text-decoration:line-through; }
-

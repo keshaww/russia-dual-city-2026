@@ -1,4 +1,4 @@
-const CACHE_NAME = "russia-trip-shell-v3-20260926";
+const CACHE_NAME = "russia-trip-shell-v4-20260926";
 const APP_SHELL = new URL("./index.html", self.registration.scope).href;
 const OFFLINE_PAGE = new URL("./offline.html", self.registration.scope).href;
 const CORE_ASSETS = [
@@ -31,7 +31,7 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin || !url.href.startsWith(self.registration.scope)) return;
 
-  if (request.mode === "navigate") {
+  if (request.mode === "navigate" && !url.pathname.toLowerCase().endsWith(".pdf")) {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
       const cached = await cache.match(APP_SHELL);

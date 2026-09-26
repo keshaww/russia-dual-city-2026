@@ -1,8 +1,8 @@
 const CACHE_NAME = "russia-trip-shell-v5-20260926";
-const APP_SHELL = new URL("./index.html", self.registration.scope).href;
+const APP_SHELL = new URL("./index.html?v=visual-1", self.registration.scope).href;
 const OFFLINE_PAGE = new URL("./offline.html", self.registration.scope).href;
 const CORE_ASSETS = [
-  "./", "./index.html", "./offline.html", "./manifest.webmanifest",
+  "./", "./index.html?v=visual-1", "./offline.html", "./manifest.webmanifest",
   "./release-20260926/styles.css?v=visual-1", "./release-20260926/ledger.css?v=visual-1", "./release-20260926/weather.css?v=visual-1",
   "./release-20260926/app.js?v=visual-1", "./release-20260926/overview-map.js", "./release-20260926/route-ui.js", "./release-20260926/geo-map.js?v=visual-1",
   "./release-20260926/runtime-storage.js", "./release-20260926/ticket-pdf-preview.js", "./release-20260926/ledger.js",
